@@ -1,0 +1,2931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
+<title>School Management System</title>
+<style>
+:root{
+  --primary:#2563eb;--primary-dark:#1d4ed8;--bg:#f5f7fb;--card:#fff;--text:#172033;
+  --muted:#64748b;--border:#e5e7eb;--success:#16a34a;--warning:#d97706;--danger:#dc2626;
+  --sidebar:#111827;--sidebar-text:#cbd5e1;--sidebar-active:#2563eb;--radius:14px;
+  --shadow:0 4px 18px rgba(15,23,42,.06)
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh;display:flex}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:255px;background:var(--sidebar);color:#fff;z-index:50;display:flex;flex-direction:column;transition:.25s}
+.brand{padding:22px 20px;display:flex;gap:12px;align-items:center;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand-icon{width:40px;height:40px;border-radius:11px;background:#2563eb;display:grid;place-items:center;font-weight:800}
+.brand h1{font-size:16px;margin:0}.brand small{color:#94a3b8}
+.nav{padding:14px 10px;overflow:auto;flex:1}
+.nav-section{font-size:10px;text-transform:uppercase;color:#64748b;padding:13px 12px 7px;font-weight:700;letter-spacing:.08em}
+.nav button{border:0;background:transparent;color:var(--sidebar-text);width:100%;padding:10px 12px;border-radius:9px;text-align:left;display:flex;gap:11px;align-items:center;margin:2px 0}
+.nav button:hover,.nav button.active{background:var(--sidebar-active);color:#fff}
+.nav-icon{width:20px;text-align:center;font-size:16px}.sidebar-footer{padding:14px;border-top:1px solid rgba(255,255,255,.08)}
+.user-mini{display:flex;gap:10px;align-items:center}.avatar{width:36px;height:36px;border-radius:50%;background:#dbeafe;color:#1d4ed8;display:grid;place-items:center;font-weight:700}
+.main{margin-left:255px;min-width:0;flex:1}
+.topbar{height:70px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:30}
+.top-left{display:flex;align-items:center;gap:14px}.menu-toggle{display:none;border:0;background:#f1f5f9;border-radius:9px;width:40px;height:40px}
+.page-title{font-size:20px;font-weight:750}.top-actions{display:flex;gap:9px;align-items:center}
+.icon-btn{width:40px;height:40px;border:1px solid var(--border);background:#fff;border-radius:9px;position:relative}
+.badge-dot{position:absolute;right:7px;top:7px;width:7px;height:7px;background:#ef4444;border-radius:50%}
+.content{padding:25px 28px 95px;max-width:1600px;margin:auto}
+.view{display:none}.view.active{display:block}
+.page-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:22px}
+.page-head h2{margin:0 0 5px;font-size:24px}.page-head p{margin:0;color:var(--muted);font-size:14px}
+.btn{border:1px solid var(--border);background:#fff;color:var(--text);padding:9px 14px;border-radius:9px;font-weight:650;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{background:#f8fafc}.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+.btn-danger{color:#b91c1c;border-color:#fecaca;background:#fff}.btn-sm{padding:7px 10px;font-size:12px}
+.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stat{padding:18px;display:flex;justify-content:space-between;gap:10px}.stat-label{font-size:13px;color:var(--muted);font-weight:600}.stat-value{font-size:25px;font-weight:800;margin-top:7px}.stat-note{font-size:11px;margin-top:5px}.positive{color:var(--success)}.warning{color:var(--warning)}.negative{color:var(--danger)}
+.stat-icon{width:44px;height:44px;border-radius:11px;background:#eff6ff;color:#2563eb;display:grid;place-items:center;font-size:19px}
+.two{grid-template-columns:1.25fr .75fr}.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card-head{padding:17px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px}.card-head h3{font-size:15px;margin:0}.card-body{padding:18px}
+.list{display:flex;flex-direction:column}.list-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #eef2f7}.list-row:last-child{border-bottom:0}.list-main{display:flex;align-items:center;gap:11px;min-width:0}.list-main strong{font-size:13px;display:block}.list-main span{font-size:11px;color:var(--muted)}
+.table-card{overflow:hidden}.table-tools{padding:14px 16px;display:flex;gap:9px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.search{min-width:220px;flex:1;position:relative}.search input{width:100%;padding:10px 12px 10px 35px;border:1px solid var(--border);border-radius:9px;outline:none}.search span{position:absolute;left:12px;top:9px;color:#94a3b8}
+select,input,textarea{border:1px solid var(--border);background:#fff;border-radius:9px;padding:9px 11px;outline:none;color:var(--text)}
+input:focus,select:focus,textarea:focus{border-color:#93c5fd;box-shadow:0 0 0 3px #dbeafe}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:12px 14px;border-bottom:1px solid #eef2f7;font-size:13px}th{background:#f8fafc;color:#475569;font-size:11px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}tr:hover td{background:#fafcff}
+.student-cell{display:flex;align-items:center;gap:9px}.avatar-sm{width:32px;height:32px;border-radius:9px;background:#e0e7ff;color:#3730a3;display:grid;place-items:center;font-size:11px;font-weight:800}
+.status{padding:4px 8px;border-radius:999px;font-size:10px;font-weight:750;display:inline-block}.status-paid,.status-present,.status-active{background:#dcfce7;color:#166534}.status-pending,.status-leave{background:#fef3c7;color:#92400e}.status-absent,.status-inactive{background:#fee2e2;color:#991b1b}
+.actions{display:flex;gap:5px}.action{border:1px solid var(--border);background:#fff;border-radius:7px;padding:6px 8px;font-size:11px}
+.progress{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden}.progress>span{display:block;height:100%;background:var(--primary);border-radius:99px}
+.chart{height:220px;display:flex;align-items:end;gap:12px;padding:15px 8px 0}.bar{flex:1;min-width:14px;background:#93c5fd;border-radius:7px 7px 2px 2px;position:relative}.bar label{position:absolute;bottom:-20px;width:100%;text-align:center;font-size:10px;color:#64748b}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.quick button{padding:13px 8px;border:1px dashed #cbd5e1;background:#fff;border-radius:10px;text-align:center;font-size:12px;color:#334155}.quick button b{display:block;font-size:20px;margin-bottom:5px;color:#2563eb}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.cal-day{padding:9px 3px;text-align:center;font-size:11px;border-radius:7px}.cal-head{font-weight:700;color:#64748b}.cal-today{background:#2563eb;color:#fff;font-weight:800}.cal-event{background:#dbeafe;color:#1d4ed8}
+.notice{padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:9px}.notice strong{font-size:13px}.notice p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:700;color:#475569}.field.full{grid-column:1/-1}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.48);z-index:100;align-items:center;justify-content:center;padding:16px}.modal-backdrop.show{display:flex}.modal{background:#fff;border-radius:15px;width:min(650px,100%);max-height:90vh;overflow:auto;box-shadow:0 25px 60px rgba(0,0,0,.2)}.modal-head{padding:18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0;font-size:17px}.close{border:0;background:#f1f5f9;width:34px;height:34px;border-radius:8px}.modal-body{padding:18px}.modal-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 15px;border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.2);font-size:13px;z-index:200;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s}.toast.show{transform:none;opacity:1}
+.mobile-nav{display:none}
+.login{min-height:100vh;background:linear-gradient(135deg,#eff6ff,#f8fafc);display:flex;align-items:center;justify-content:center;padding:20px}.login-card{width:min(430px,100%);background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 20px 60px rgba(15,23,42,.1);padding:30px}.login-brand{text-align:center}.login-brand .brand-icon{margin:auto}.login-brand h2{margin:13px 0 4px}.login-brand p{margin:0 0 25px;color:var(--muted);font-size:13px}.login .field{margin-bottom:14px}.login-note{font-size:11px;color:#64748b;background:#f8fafc;padding:10px;border-radius:8px;margin-top:14px}.hide{display:none!important}
+.empty{padding:35px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:1fr}.three{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){
+ .sidebar{transform:translateX(-100%);box-shadow:10px 0 30px rgba(0,0,0,.2)}.sidebar.open{transform:none}.main{margin-left:0}.menu-toggle{display:block}.topbar{padding:0 15px}.content{padding:18px 14px 90px}.page-title{font-size:17px}.top-actions .user-top{display:none}
+ .stats{grid-template-columns:repeat(2,1fr);gap:10px}.stat{padding:14px}.stat-value{font-size:21px}.three{grid-template-columns:1fr}.quick{grid-template-columns:repeat(2,1fr)}
+ .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;height:64px;background:#fff;border-top:1px solid var(--border);z-index:45;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom)}.mobile-nav button{border:0;background:transparent;color:#64748b;font-size:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:58px}.mobile-nav button.active{color:#2563eb;font-weight:800}
+ .page-head{align-items:center}.page-head h2{font-size:20px}.page-head p{font-size:12px}.page-head .btn span.label{display:none}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+ .table-tools{padding:11px}.search{min-width:100%}
+}
+@media(max-width:450px){.stats{grid-template-columns:1fr 1fr}.stat-label{font-size:11px}.stat-note{font-size:10px}.content{padding-left:11px;padding-right:11px}.card-head{padding:14px}.card-body{padding:14px}.topbar{height:62px}.icon-btn{width:36px;height:36px}}
+</style>
+
+<style>
+#transportAssignmentTable th:nth-child(4),
+#transportAssignmentTable td:nth-child(4) { min-width: 110px; }
+#transportAssignmentTable th:nth-child(5),
+#transportAssignmentTable td:nth-child(5) { min-width: 130px; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style id="final-responsive-fix">
+
+/* ===== Responsive layout fix: desktop + tablet + mobile ===== */
+html, body { max-width:100%; overflow-x:hidden !important; }
+*, *::before, *::after { box-sizing:border-box; }
+
+img, svg, video, canvas { max-width:100%; height:auto; }
+
+.table-wrap, .table-responsive, .report-table-wrap {
+  width:100%;
+  max-width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+table {
+  max-width:100%;
+}
+
+@media (max-width: 900px) {
+  .main, main, .content, .page-content, .app-content {
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+
+  .card, .panel, .section, .modal-content {
+    max-width:100% !important;
+  }
+
+  .grid, .cards-grid, .dashboard-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  .table-wrap table, .table-responsive table {
+    min-width:760px;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size:14px;
+  }
+
+  .grid, .cards-grid, .dashboard-grid {
+    grid-template-columns:1fr !important;
+  }
+
+  .card, .panel, .section {
+    width:100% !important;
+    min-width:0 !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+
+  .card-head, .panel-head, .section-head {
+    flex-wrap:wrap !important;
+    gap:10px !important;
+  }
+
+  .card-head > *, .panel-head > *, .section-head > * {
+    max-width:100%;
+  }
+
+  .card-head button, .panel-head button, .section-head button,
+  button.btn, .btn {
+    max-width:100%;
+  }
+
+  /* Report tables stay readable without pushing the entire page sideways. */
+  .table-wrap, .table-responsive, .report-table-wrap {
+    overflow-x:auto !important;
+    width:100% !important;
+  }
+
+  .table-wrap table, .table-responsive table, .report-table-wrap table {
+    min-width:680px !important;
+  }
+
+  /* Generated report container should fit the viewport. */
+  #inlineGeneratedReports,
+  #connectedReportResults,
+  #generatedReport_student,
+  #studentReportResult {
+    width:100% !important;
+    max-width:100% !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+
+  /* Forms become one column on phones. */
+  .form-grid, .form-row, .two-col, .form-columns {
+    grid-template-columns:1fr !important;
+  }
+
+  input, select, textarea {
+    max-width:100% !important;
+    width:100%;
+  }
+
+  /* Keep navigation/header from creating page-level horizontal scroll. */
+  header, .topbar, .navbar, .app-header {
+    max-width:100vw !important;
+  }
+}
+
+/* Desktop: use available width cleanly. */
+@media (min-width: 901px) {
+  .table-wrap, .table-responsive, .report-table-wrap {
+    overflow-x:auto;
+  }
+}
+
+</style>
+<style id="final-report-full-width-fix">
+
+/* ===== Final report layout fix =====
+   Generated reports must occupy the full content width, not one grid column. */
+#inlineGeneratedReports,
+#connectedReportResults {
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  grid-column:1 / -1 !important;
+  justify-self:stretch !important;
+}
+
+#inlineGeneratedReports .connected-inline-report,
+#connectedReportResults .connected-inline-report {
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+}
+
+#inlineGeneratedReports .table-wrap,
+#connectedReportResults .table-wrap {
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:auto !important;
+  -webkit-overflow-scrolling:touch;
+}
+
+#inlineGeneratedReports table,
+#connectedReportResults table {
+  width:100%;
+  max-width:none;
+  border-collapse:collapse;
+}
+
+@media (max-width: 900px) {
+  #inlineGeneratedReports,
+  #connectedReportResults {
+    grid-column:1 / -1 !important;
+    width:100% !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #inlineGeneratedReports,
+  #connectedReportResults {
+    width:100% !important;
+    max-width:100vw !important;
+    margin:16px 0 0 !important;
+  }
+
+  #inlineGeneratedReports .connected-inline-report,
+  #connectedReportResults .connected-inline-report {
+    width:100% !important;
+    margin:0 !important;
+  }
+
+  #inlineGeneratedReports .card-head,
+  #connectedReportResults .card-head {
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:10px !important;
+  }
+
+  #inlineGeneratedReports .card-head > div,
+  #connectedReportResults .card-head > div {
+    min-width:0 !important;
+    flex:1 1 220px;
+  }
+
+  #inlineGeneratedReports .table-wrap,
+  #connectedReportResults .table-wrap {
+    width:100% !important;
+    overflow-x:auto !important;
+  }
+
+  #inlineGeneratedReports table,
+  #connectedReportResults table {
+    min-width:680px !important;
+  }
+}
+
+
+<style id="role-management-fix">
+.role-pill{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:700}
+.super-only{display:none!important}.super-only.visible{display:flex!important}.view.super-only.visible{display:block!important}
+.school-admin-only{display:none!important}.super-only.import-only.visible{display:block!important}
+.role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media(max-width:700px){.role-grid{grid-template-columns:1fr}}
+.admin-list{display:grid;gap:10px}.admin-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border:1px solid var(--border);border-radius:10px;background:#fff}.admin-row small{display:block;color:#64748b;margin-top:3px}.admin-actions{display:flex;gap:7px;flex-wrap:wrap}
+
+</style>
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="brand-icon">S</div>
+      <h2>School Management</h2>
+      <p>Administration &amp; Student Portal</p>
+    </div>
+    <div class="field"><label>Email</label><input id="loginEmail" type="email" value="admin@school.local" placeholder="Enter email"></div>
+    <div class="field"><label>Password</label><input id="loginPassword" type="password" value="admin123" placeholder="Enter password"></div>
+    <div class="field"><label>Login As</label><select id="loginRole"><option value="school_admin">School Admin</option><option value="super_admin">Super Admin</option></select></div>
+    <div class="field" id="loginSchoolField"><label>School</label><select id="loginSchool"><option value="">Loading schools...</option></select></div>
+    <button id="loginButton" type="button" class="btn btn-primary" style="width:100%;justify-content:center">Sign In</button>
+    <div class="login-note"><b>Demo roles:</b> Super Admin controls schools and School Admin accounts. School Admin manages only the school application. Supabase authentication + database Row Level Security can be connected for production.</div>
+  </div>
+</div>
+
+<script>
+/* ===== School Admin login school selector ===== */
+(function(){
+  function getSchools(){
+    try{ const x=JSON.parse(localStorage.getItem('managedSchools')||'[]'); return Array.isArray(x)?x:[]; }catch(e){ return []; }
+  }
+  window.populateLoginSchools=function(){
+    const role=document.getElementById('loginRole'), field=document.getElementById('loginSchoolField'), sel=document.getElementById('loginSchool');
+    if(!role||!field||!sel)return;
+    const isSchool=role.value==='school_admin';
+    field.style.display=isSchool?'block':'none';
+    if(!isSchool){ sel.innerHTML='<option value="">Platform</option>'; return; }
+    const schools=getSchools();
+    const current=sel.value;
+    sel.innerHTML=schools.length ? '<option value="">Select your school</option>'+schools.map(x=>`<option value="${String(x.id).replace(/"/g,'&quot;')}">${String(x.name||'').replace(/</g,'&lt;')}${x.code?' — '+String(x.code).replace(/</g,'&lt;'):''}</option>`).join('') : '<option value="">No schools created yet</option>';
+    if(current && schools.some(x=>String(x.id)===current)) sel.value=current;
+  };
+  function wire(){
+    const role=document.getElementById('loginRole'); if(role)role.addEventListener('change',window.populateLoginSchools);
+    window.populateLoginSchools();
+    window.addEventListener('storage',e=>{if(e.key==='managedSchools')window.populateLoginSchools();});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
+})();
+
+/* ===== Emergency-safe login bootstrap =====
+   This handler is intentionally independent of the larger application script.
+   It guarantees that the Sign In button works even if another optional
+   feature throws an error during startup. */
+(function () {
+  function safeGet(key) {
+    try { return window.localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function safeSet(key, value) {
+    try { window.localStorage.setItem(key, value); return true; } catch (e) { return false; }
+  }
+
+  window.login = function () {
+    var emailEl = document.getElementById('loginEmail');
+    var passEl = document.getElementById('loginPassword');
+    var roleEl = document.getElementById('loginRole');
+
+    var email = ((emailEl && emailEl.value) || '').trim().toLowerCase();
+    var pass = (passEl && passEl.value) || '';
+    var role = (roleEl && roleEl.value) || 'school_admin';
+    var schoolEl = document.getElementById('loginSchool');
+    var selectedSchoolId = (schoolEl && schoolEl.value) || '';
+
+    if (!email || !pass) {
+      var emptyToast = document.getElementById('toast');
+      if (emptyToast) {
+        emptyToast.textContent = 'Enter email and password';
+        emptyToast.classList.add('show');
+        setTimeout(function(){ emptyToast.classList.remove('show'); }, 2600);
+      } else {
+        alert('Enter email and password');
+      }
+      return false;
+    }
+
+    var admins = [];
+    try {
+      admins = JSON.parse(safeGet('schoolAdmins') || '[]');
+      if (!Array.isArray(admins)) admins = [];
+    } catch (e) {
+      admins = [];
+    }
+
+    var user = null;
+
+    if (role === 'super_admin') {
+      if (email !== 'superadmin@school.local' || pass !== 'superadmin123') {
+        alert('Invalid Super Admin login.\n\nEmail: superadmin@school.local\nPassword: superadmin123');
+        return false;
+      }
+      user = {
+        name: 'Super Admin',
+        role: 'super_admin',
+        schoolId: '',
+        schoolName: 'Platform'
+      };
+    } else {
+      var demo = {
+        email: 'admin@school.local',
+        password: 'admin123',
+        name: 'School Admin',
+        status: 'Active',
+        role: 'school_admin',
+        schoolId: 'SCH-DEMO',
+        schoolName: 'Sunrise English Medium School'
+      };
+
+      var account = admins.find(function(a) {
+        return String(a.email || '').trim().toLowerCase() === email;
+      });
+
+      var validAccount =
+        account &&
+        String(account.password || '') === pass &&
+        String(account.status || 'Active').toLowerCase() === 'active';
+
+      if (validAccount) {
+        if (selectedSchoolId && String(account.schoolId||'') !== selectedSchoolId) { alert('This School Admin account belongs to a different school. Select the school assigned to this account.'); return false; }
+        user = account;
+      } else if (!account && email === demo.email && pass === demo.password) {
+        user = demo;
+      } else {
+        alert('Invalid School Admin login.\n\nEmail: admin@school.local\nPassword: admin123');
+        return false;
+      }
+    }
+
+    if (role === 'school_admin') {
+      try {
+        var loginSchools = JSON.parse(safeGet('managedSchools') || '[]');
+        var chosen = loginSchools.find(function(s){ return String(s.id) === String(selectedSchoolId || user.schoolId || ''); });
+        if (chosen) { user.schoolId = chosen.id; user.schoolName = chosen.name; user.schoolCode = chosen.code || ''; }
+      } catch(e) {}
+    }
+    safeSet('schoolLoggedIn', '1');
+    safeSet('schoolUserRole', user.role || role);
+    safeSet('schoolUserName', user.name || (role === 'super_admin' ? 'Super Admin' : 'School Admin'));
+    safeSet('schoolUserSchoolId', user.schoolId || '');
+    safeSet('schoolUserSchoolName', user.schoolName || '');
+    safeSet('schoolUserSchoolCode', user.schoolCode || '');
+
+    var loginScreen = document.getElementById('loginScreen');
+    var app = document.getElementById('app');
+    if (loginScreen) loginScreen.classList.add('hide');
+    if (app) app.classList.remove('hide');
+
+    /* Run the role UI if the main script loaded. */
+    try {
+      if (typeof setRoleUI === 'function') setRoleUI();
+      try { if (typeof populateSuperImportSchoolSelect === 'function') populateSuperImportSchoolSelect(); } catch (e) {}
+    } catch (e) {}
+
+    try {
+      if (typeof showToast === 'function') {
+        showToast(role === 'super_admin' ? 'Welcome, Super Admin' : 'Welcome, School Admin');
+      }
+    } catch (e) {}
+
+    return true;
+  };
+
+  function wireLogin() {
+    var btn = document.getElementById('loginButton');
+    var email = document.getElementById('loginEmail');
+    var pass = document.getElementById('loginPassword');
+
+    if (btn) btn.addEventListener('click', window.login);
+    if (email) email.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (pass) pass.focus();
+      }
+    });
+    if (pass) pass.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        window.login();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireLogin);
+  } else {
+    wireLogin();
+  }
+})();
+</script>
+
+<div id="app" class="app hide">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-icon">S</div><div><h1>School Management</h1><small>Administration</small></div></div>
+    <nav class="nav">
+      <div class="nav-section">Overview</div>
+      <button class="active" data-view="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+      <div class="nav-section">People</div>
+      <button data-view="students"><span class="nav-icon">🎓</span>Students</button>
+      <button data-view="staff"><span class="nav-icon">👩‍🏫</span>Teachers &amp; Staff</button>
+      <div class="nav-section">Academic</div>
+      <button data-view="academics"><span class="nav-icon">📚</span>Classes &amp; Academics</button>
+      <button data-view="attendance"><span class="nav-icon">✓</span>Attendance</button>
+      <button data-view="exams"><span class="nav-icon">🏆</span>Exams &amp; Results</button>
+      <button data-view="homework"><span class="nav-icon">📝</span>Homework</button>
+      <div class="nav-section">Operations</div>
+      <button data-view="fees"><span class="nav-icon">₹</span>Fees &amp; Payments</button>
+      <button data-view="notices"><span class="nav-icon">📢</span>Notices</button>
+      <button data-view="transport"><span class="nav-icon">🚌</span>Transport</button>
+      <button data-view="library"><span class="nav-icon">📖</span>Library</button>
+      <div class="nav-section">Management</div>
+      <button data-view="reports"><span class="nav-icon">📊</span>Reports</button>
+      <button class="super-only" data-view="school-management" id="schoolManagementNav"><span class="nav-icon">🏫</span>Schools &amp; Admins</button>
+      <button data-view="settings"><span class="nav-icon">⚙</span>Settings</button>
+    </nav>
+    <div class="sidebar-footer">
+  <div class="user-mini">
+    <div class="avatar" id="currentUserAvatar">AD</div>
+    <div style="min-width:0;flex:1">
+      <strong style="font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="currentUserName">School Admin</strong>
+      <div style="font-size:10px;color:#94a3b8" id="currentUserRole">School Admin</div>
+    </div>
+  </div>
+  <button id="sidebarLogoutButton" type="button"
+    onclick="logout()"
+    style="width:100%;margin-top:10px;padding:9px 12px;border:1px solid #334155;border-radius:9px;background:#172033;color:#fff;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px">
+    <span>↪</span><span>Logout</span>
+  </button>
+</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="top-left"><button class="menu-toggle" onclick="toggleSidebar()">☰</button><div class="page-title" id="pageTitle">Dashboard</div></div>
+      <div class="top-actions"><button class="icon-btn" title="Notifications" onclick="showToast('You have 3 new notifications')">🔔<span class="badge-dot"></span></button><button class="icon-btn user-top" id="userTopBadge" title="Profile">SA</button></div>
+    </header>
+
+    <section class="content">
+
+      <div id="view-dashboard" class="view active">
+        <div class="page-head"><div><h2>Good morning, Admin 👋</h2><p>Here is what's happening at your school today.</p></div><button class="btn btn-primary" onclick="openModal('quickModal')">＋ Quick Action</button></div>
+        <div class="grid stats">
+          <div class="card stat"><div><div class="stat-label">Total Students</div><div class="stat-value">850</div><div class="stat-note positive">↑ 4.2% this year</div></div><div class="stat-icon">🎓</div></div>
+          <div class="card stat"><div><div class="stat-label">Teachers &amp; Staff</div><div class="stat-value">52</div><div class="stat-note positive">↑ 2 new this month</div></div><div class="stat-icon">👩‍🏫</div></div>
+          <div class="card stat"><div><div class="stat-label">Today's Attendance</div><div class="stat-value">94.2%</div><div class="stat-note positive">801 of 850 present</div></div><div class="stat-icon">✓</div></div>
+          <div class="card stat"><div><div class="stat-label">Fee Collection</div><div class="stat-value">₹8.42L</div><div class="stat-note positive">68% collected</div></div><div class="stat-icon">₹</div></div>
+          <div class="card stat"><div><div class="stat-label">Pending Fees</div><div class="stat-value">₹3.94L</div><div class="stat-note warning">47 accounts due</div></div><div class="stat-icon">!</div></div>
+        </div>
+        <div class="grid two">
+          <div class="card">
+            <div class="card-head"><h3>Fee Collection — Current Term</h3><span style="font-size:11px;color:#64748b">₹12.36L total</span></div>
+            <div class="card-body"><div class="chart">
+              <div class="bar" style="height:42%"><label>Apr</label></div><div class="bar" style="height:57%"><label>May</label></div><div class="bar" style="height:51%"><label>Jun</label></div><div class="bar" style="height:72%"><label>Jul</label></div><div class="bar" style="height:88%"><label>Aug</label></div><div class="bar" style="height:64%"><label>Sep</label></div>
+            </div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Today's Schedule</h3><button class="btn btn-sm" onclick="navigate('academics')">View timetable</button></div>
+            <div class="card-body list">
+              <div class="list-row"><div class="list-main"><div class="avatar-sm">8A</div><div><strong>Grade 8-A • Mathematics</strong><span>09:00 – 09:45 • Room 204</span></div></div></div>
+              <div class="list-row"><div class="list-main"><div class="avatar-sm">10B</div><div><strong>Grade 10-B • Physics</strong><span>10:00 – 10:45 • Lab 2</span></div></div></div>
+              <div class="list-row"><div class="list-main"><div class="avatar-sm">6C</div><div><strong>Grade 6-C • English</strong><span>11:30 – 12:15 • Room 103</span></div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="grid two" style="margin-top:16px">
+          <div class="card"><div class="card-head"><h3>Recent Payments</h3><button class="btn btn-sm" onclick="navigate('fees')">View all</button></div><div class="card-body list">
+            <div class="list-row"><div class="list-main"><div class="avatar-sm">AS</div><div><strong>Aarav Sharma</strong><span>School Fee • Today, 10:32 AM</span></div></div><strong>₹12,500</strong></div>
+            <div class="list-row"><div class="list-main"><div class="avatar-sm">AM</div><div><strong>Ananya Menon</strong><span>Transport • Today, 09:18 AM</span></div></div><strong>₹1,700</strong></div>
+            <div class="list-row"><div class="list-main"><div class="avatar-sm">RK</div><div><strong>Rohan Kumar</strong><span>School Fee • Yesterday</span></div></div><strong>₹8,000</strong></div>
+          </div></div>
+          <div class="card"><div class="card-head"><h3>Recent Notices</h3><button class="btn btn-sm" onclick="navigate('notices')">View all</button></div><div class="card-body">
+            <div class="notice"><strong>Independence Day Programme</strong><p>School will conduct the programme on 15 August at the main auditorium.</p></div>
+            <div class="notice"><strong>Term 1 Examination Schedule</strong><p>Exam schedule has been published for Grades 1–10.</p></div>
+            <div class="notice"><strong>Fee Payment Reminder</strong><p>Parents are requested to clear pending fees before the due date.</p></div>
+          </div></div>
+        </div>
+        <div class="card" style="margin-top:16px"><div class="card-head"><h3>Quick Actions</h3></div><div class="card-body"><div class="quick">
+          <button onclick="openModal('studentModal')"><b>＋</b>Add Student</button><button onclick="openModal('paymentModal')"><b>₹</b>Record Payment</button><button onclick="navigate('attendance')"><b>✓</b>Mark Attendance</button><button onclick="openModal('noticeModal')"><b>📢</b>Create Notice</button>
+        </div></div></div>
+      </div>
+
+      <div id="view-students" class="view">
+        <div class="page-head"><div><h2>Students</h2><p>Manage student profiles, admissions and class assignments.</p></div><button class="btn btn-primary" onclick="openModal('studentModal')">＋ <span class="label">Add Student</span></button></div>
+        <div class="card table-card"><div class="table-tools"><div class="search"><span>⌕</span><input id="studentSearch" oninput="renderStudents()" placeholder="Search students..."></div><select id="studentClassFilter" onchange="filterStudentsByClass(this.value)">
+<option value="">All Classes</option>
+<option value="LKG">LKG</option>
+<option value="UKG">UKG</option>
+<option value="1st Std">1st Std</option>
+<option value="2nd Std">2nd Std</option>
+<option value="3rd Std">3rd Std</option>
+<option value="4th Std">4th Std</option>
+</select>
+<select id="studentStatusFilter" onchange="filterStudentsByStatus(this.value)">
+<option value="">All Status</option><option value="Active">Active</option><option value="Inactive">Inactive</option>
+</select></div>
+        <div class="table-wrap"><table id="studentTable"><thead><tr><th>Student</th><th>Admission No.</th><th>Class</th><th>Parent / Phone</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+          <tr><td><div class="student-cell"><div class="avatar-sm">AS</div><div><strong>Aarav Sharma</strong><small style="display:block;color:#64748b">ID: STU-1001</small></div></div></td><td>ADM-2021-001</td><td>Grade 8-A</td><td>Rajesh Sharma<br><small>98765 43210</small></td><td><span class="status status-active">Active</span></td><td><div class="actions"><button class="action" onclick="viewStudent('Aarav Sharma')">View</button><button class="action" onclick="openModal('studentModal')">Edit</button></div></td></tr>
+          <tr><td><div class="student-cell"><div class="avatar-sm">AM</div><div><strong>Ananya Menon</strong><small style="display:block;color:#64748b">ID: STU-1002</small></div></div></td><td>ADM-2022-017</td><td>Grade 6-B</td><td>Suresh Menon<br><small>98470 11223</small></td><td><span class="status status-active">Active</span></td><td><div class="actions"><button class="action" onclick="viewStudent('Ananya Menon')">View</button><button class="action" onclick="openModal('studentModal')">Edit</button></div></td></tr>
+          <tr><td><div class="student-cell"><div class="avatar-sm">RK</div><div><strong>Rohan Kumar</strong><small style="display:block;color:#64748b">ID: STU-1003</small></div></div></td><td>ADM-2023-041</td><td>Grade 10-A</td><td>Vijay Kumar<br><small>98950 34567</small></td><td><span class="status status-active">Active</span></td><td><div class="actions"><button class="action" onclick="viewStudent('Rohan Kumar')">View</button><button class="action" onclick="openModal('studentModal')">Edit</button></div></td></tr>
+          <tr><td><div class="student-cell"><div class="avatar-sm">NS</div><div><strong>Niya Suresh</strong><small style="display:block;color:#64748b">ID: STU-1004</small></div></div></td><td>ADM-2024-006</td><td>Grade 3-C</td><td>Meera Suresh<br><small>96050 77881</small></td><td><span class="status status-active">Active</span></td><td><div class="actions"><button class="action" onclick="viewStudent('Niya Suresh')">View</button><button class="action" onclick="openModal('studentModal')">Edit</button></div></td></tr>
+        </tbody></table></div></div>
+      </div>
+
+      <div id="view-staff" class="view">
+        <div class="page-head"><div><h2>Teachers &amp; Staff</h2><p>Manage teachers, employees, attendance and leave.</p></div><button class="btn btn-primary" onclick="openModal('staffModal')">＋ <span class="label">Add Staff</span></button></div>
+        <div class="grid stats"><div class="card stat"><div><div class="stat-label">Teaching Staff</div><div class="stat-value">41</div></div><div class="stat-icon">👩‍🏫</div></div><div class="card stat"><div><div class="stat-label">Non-teaching</div><div class="stat-value">11</div></div><div class="stat-icon">👤</div></div><div class="card stat"><div><div class="stat-label">Present Today</div><div class="stat-value">49</div></div><div class="stat-icon">✓</div></div></div>
+        <div class="card table-card"><div class="table-tools"><div class="search"><span>⌕</span><input id="staffSearch" oninput="renderStaff()" placeholder="Search staff..."></div><select id="staffDesignationFilter" onchange="filterStaffByDesignation(this.value)">
+<option value="">All Designations</option>
+<option value="Teacher">Teacher</option>
+<option value="Senior Teacher">Senior Teacher</option>
+<option value="Principal">Principal</option>
+<option value="Vice Principal">Vice Principal</option>
+<option value="Accountant">Accountant</option>
+<option value="Clerk">Clerk</option>
+<option value="Librarian">Librarian</option>
+<option value="Driver">Driver</option>
+<option value="Attender">Attender</option>
+<option value="Administrator">Administrator</option>
+</select></div><div class="table-wrap"><table id="staffTable"><thead><tr><th>Staff</th><th>Employee ID</th><th>Designation</th><th>Subjects</th><th>Contact</th><th>Status</th></tr></thead><tbody>
+        <tr><td><div class="student-cell"><div class="avatar-sm">RS</div><strong>Ramesh Singh</strong></div></td><td>EMP-001</td><td>Senior Teacher</td><td>Mathematics</td><td>98765 10001</td><td><span class="status status-active">Active</span></td></tr>
+        <tr><td><div class="student-cell"><div class="avatar-sm">PM</div><strong>Priya Menon</strong></div></td><td>EMP-002</td><td>Teacher</td><td>English</td><td>98470 20002</td><td><span class="status status-active">Active</span></td></tr>
+        <tr><td><div class="student-cell"><div class="avatar-sm">AK</div><strong>Arun Kumar</strong></div></td><td>EMP-003</td><td>Accountant</td><td>Finance</td><td>98950 30003</td><td><span class="status status-active">Active</span></td></tr>
+        </tbody></table></div></div>
+      </div>
+
+      <div id="view-academics" class="view">
+        <div class="page-head"><div><h2>Classes &amp; Academics</h2><p>Academic year, classes, divisions, subjects and timetable.</p></div><button class="btn btn-primary" onclick="openModal('classModal')">＋ <span class="label">Add Class</span></button></div>
+        <div class="grid three"><div class="card"><div class="card-head"><h3>Academic Year</h3></div><div class="card-body"><strong style="font-size:21px">2026–27</strong><p style="color:#64748b;font-size:12px">Current academic year</p><button class="btn btn-sm">Manage year</button></div></div><div class="card"><div class="card-head"><h3>Classes</h3></div><div class="card-body"><strong style="font-size:21px">10</strong><p style="color:#64748b;font-size:12px">Grades 1 through 10</p><button class="btn btn-sm">Manage classes</button></div></div><div class="card"><div class="card-head"><h3>Subjects</h3></div><div class="card-body"><strong style="font-size:21px">38</strong><p style="color:#64748b;font-size:12px">Active subjects</p><button class="btn btn-sm">Manage subjects</button></div></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-head"><h3>Today's Timetable</h3><select><option>Monday</option><option>Tuesday</option><option>Wednesday</option></select></div><div class="table-wrap"><table><thead><tr><th>Time</th><th>Grade 6-A</th><th>Grade 7-A</th><th>Grade 8-A</th><th>Grade 10-A</th></tr></thead><tbody><tr><td>09:00</td><td>English</td><td>Science</td><td>Mathematics</td><td>Physics</td></tr><tr><td>10:00</td><td>Mathematics</td><td>English</td><td>Social Science</td><td>Chemistry</td></tr><tr><td>11:30</td><td>Science</td><td>Mathematics</td><td>English</td><td>Mathematics</td></tr><tr><td>12:30</td><td>Lunch</td><td>Lunch</td><td>Lunch</td><td>Lunch</td></tr></tbody></table></div></div>
+      </div>
+
+      <div id="view-attendance" class="view">
+        <div class="page-head"><div><h2>Attendance</h2><p>Record and review student attendance.</p></div><button class="btn btn-primary" onclick="markAttendance()">✓ <span class="label">Save Attendance</span></button></div>
+        <div class="grid stats"><div class="card stat"><div><div class="stat-label">Present Today</div><div class="stat-value">801</div><div class="stat-note positive">94.2%</div></div><div class="stat-icon">✓</div></div><div class="card stat"><div><div class="stat-label">Absent</div><div class="stat-value">31</div><div class="stat-note negative">3.6%</div></div><div class="stat-icon">!</div></div><div class="card stat"><div><div class="stat-label">On Leave</div><div class="stat-value">18</div><div class="stat-note warning">2.1%</div></div><div class="stat-icon">◷</div></div></div>
+        <div class="card table-card"><div class="table-tools"><input type="date" value="2026-08-29"><select id="attendanceClassFilter" onchange="renderImportedAttendance()"><option value="">All Classes</option></select><div class="search"><span>⌕</span><input id="attendanceSearch" oninput="renderImportedAttendance()" placeholder="Search student..."></div></div><div class="table-wrap"><table id="attendanceTable"><thead><tr><th>Student</th><th>Admission No.</th><th>Attendance</th><th>Monthly %</th></tr></thead><tbody>
+        <tr><td><div class="student-cell"><div class="avatar-sm">AS</div><strong>Aarav Sharma</strong></div></td><td>ADM-2021-001</td><td><select class="att"><option>Present</option><option>Absent</option><option>Leave</option></select></td><td>96%</td></tr>
+        <tr><td><div class="student-cell"><div class="avatar-sm">KM</div><strong>Kiran Mathew</strong></div></td><td>ADM-2021-012</td><td><select class="att"><option>Present</option><option>Absent</option><option>Leave</option></select></td><td>91%</td></tr>
+        <tr><td><div class="student-cell"><div class="avatar-sm">SA</div><strong>Sara Ali</strong></div></td><td>ADM-2021-019</td><td><select class="att"><option>Present</option><option>Absent</option><option>Leave</option></select></td><td>98%</td></tr>
+        </tbody></table></div></div>
+      </div>
+
+      <div id="view-fees" class="view">
+        <div class="page-head"><div><h2>Fees &amp; Payments</h2><p>Manage fee structures, payments, dues and receipts.</p></div><button class="btn btn-primary" onclick="openModal('paymentModal')">＋ <span class="label">Record Payment</span></button></div>
+        <div class="grid stats"><div class="card stat"><div><div class="stat-label">Total Expected</div><div class="stat-value">₹12.36L</div></div><div class="stat-icon">₹</div></div><div class="card stat"><div><div class="stat-label">Collected</div><div class="stat-value">₹8.42L</div><div class="stat-note positive">68.1%</div></div><div class="stat-icon">✓</div></div><div class="card stat"><div><div class="stat-label">Pending</div><div class="stat-value">₹3.94L</div><div class="stat-note warning">47 accounts</div></div><div class="stat-icon">!</div></div></div>
+        <div class="card table-card"><div class="table-tools"><div class="search"><span>⌕</span><input oninput="renderImportedFeeData()" placeholder="Search student or receipt..."></div><select onchange="renderImportedFeeData()"><option>All Fee Types</option><option>School Fee</option><option>Transport</option><option>Activities</option></select><select onchange="renderImportedFeeData()"><option>All Status</option><option>Paid</option><option>Pending</option></select></div><div class="table-wrap"><table id="feeTable"><thead><tr><th>Student</th><th>Fee Type</th><th>Amount</th><th>Paid</th><th>Pending</th><th>Due Date</th><th>Status</th><th>Receipt</th></tr></thead><tbody>
+        <tr><td><strong>Aarav Sharma</strong><small style="display:block;color:#64748b">ADM-2021-001</small></td><td>School Fee</td><td>₹20,600</td><td>₹20,600</td><td>₹0</td><td>30 Jun 2026</td><td><span class="status status-paid">Paid</span></td><td><button class="action" onclick="printReceipt('Aarav Sharma','₹20,600')">Print</button></td></tr>
+        <tr><td><strong>Ananya Menon</strong><small style="display:block;color:#64748b">ADM-2022-017</small></td><td>Transport</td><td>₹10,200</td><td>₹8,500</td><td>₹1,700</td><td>31 Aug 2026</td><td><span class="status status-pending">Pending</span></td><td><button class="action" onclick="openModal('paymentModal')">Pay</button></td></tr>
+        <tr><td><strong>Rohan Kumar</strong><small style="display:block;color:#64748b">ADM-2023-041</small></td><td>School Fee</td><td>₹20,600</td><td>₹12,600</td><td>₹8,000</td><td>31 Aug 2026</td><td><span class="status status-pending">Pending</span></td><td><button class="action" onclick="openModal('paymentModal')">Pay</button></td></tr>
+        </tbody></table></div></div>
+      </div>
+
+      <div id="view-exams" class="view">
+        <div class="page-head"><div><h2>Exams &amp; Results</h2><p>Create exams, enter marks and publish report cards.</p></div><button class="btn btn-primary" onclick="openModal('examModal')">＋ <span class="label">Create Exam</span></button></div>
+        <div class="grid three"><div class="card"><div class="card-head"><h3>Term 1 Examination</h3><span class="status status-active">Active</span></div><div class="card-body"><p style="font-size:12px;color:#64748b">Grades 1–10</p><div class="progress"><span style="width:74%"></span></div><p style="font-size:11px;color:#64748b">74% marks entered</p><button class="btn btn-sm" onclick="showToast('Opening marks entry')">Enter marks</button></div></div><div class="card"><div class="card-head"><h3>Unit Test 2</h3><span class="status status-paid">Published</span></div><div class="card-body"><p style="font-size:12px;color:#64748b">Grades 6–10</p><div class="progress"><span style="width:100%"></span></div><p style="font-size:11px;color:#64748b">Results published</p><button class="btn btn-sm" onclick="showToast('Report cards ready')">Report cards</button></div></div><div class="card"><div class="card-head"><h3>Annual Exam</h3><span class="status status-pending">Upcoming</span></div><div class="card-body"><p style="font-size:12px;color:#64748b">All grades</p><p style="font-size:13px"><strong>March 2027</strong></p><button class="btn btn-sm">View schedule</button></div></div></div>
+        <div class="card" style="margin-top:16px"><div class="card-head"><h3>Recent Results</h3><button class="btn btn-sm" onclick="printReport()">Print report</button></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Mathematics</th><th>Science</th><th>English</th><th>Total</th><th>%</th><th>Grade</th></tr></thead><tbody><tr><td>Aarav Sharma</td><td>8-A</td><td>88</td><td>91</td><td>84</td><td>263/300</td><td>87.7%</td><td><span class="status status-active">A</span></td></tr><tr><td>Sara Ali</td><td>8-A</td><td>95</td><td>93</td><td>90</td><td>278/300</td><td>92.7%</td><td><span class="status status-active">A+</span></td></tr></tbody></table></div></div>
+      </div>
+
+      <div id="view-homework" class="view">
+        <div class="page-head"><div><h2>Homework &amp; Assignments</h2><p>Create and track assignments by class and subject.</p></div><button class="btn btn-primary" onclick="openModal('homeworkModal')">＋ <span class="label">Add Homework</span></button></div>
+        <div class="grid three"><div class="card"><div class="card-head"><h3>Mathematics</h3><span class="status status-pending">Due tomorrow</span></div><div class="card-body"><strong>Algebra Worksheet</strong><p style="font-size:12px;color:#64748b">Grade 8-A • 29 students assigned</p><div class="progress"><span style="width:62%"></span></div><p style="font-size:11px;color:#64748b">18 submitted</p></div></div><div class="card"><div class="card-head"><h3>English</h3><span class="status status-active">On track</span></div><div class="card-body"><strong>Reading Assignment</strong><p style="font-size:12px;color:#64748b">Grade 6-B • 31 students assigned</p><div class="progress"><span style="width:81%"></span></div><p style="font-size:11px;color:#64748b">25 submitted</p></div></div><div class="card"><div class="card-head"><h3>Science</h3><span class="status status-pending">Due Friday</span></div><div class="card-body"><strong>Lab Observation</strong><p style="font-size:12px;color:#64748b">Grade 10-A • 28 students assigned</p><div class="progress"><span style="width:43%"></span></div><p style="font-size:11px;color:#64748b">12 submitted</p></div></div></div>
+      </div>
+
+      <div id="view-notices" class="view">
+        <div class="page-head"><div><h2>Notices &amp; Communication</h2><p>Publish school notices and important announcements.</p></div><button class="btn btn-primary" onclick="openModal('noticeModal')">＋ <span class="label">Create Notice</span></button></div>
+        <div class="card"><div class="card-head"><h3>Published Notices</h3><select><option>All audiences</option><option>Parents</option><option>Teachers</option><option>Students</option></select></div><div class="card-body"><div class="notice"><strong>Independence Day Programme</strong><span class="status status-active" style="float:right">Published</span><p>All students should report by 8:30 AM on 15 August. Audience: Students &amp; Parents.</p></div><div class="notice"><strong>Term 1 Examination Schedule</strong><span class="status status-active" style="float:right">Published</span><p>Examination schedule is now available. Audience: Students, Parents &amp; Teachers.</p></div><div class="notice"><strong>Fee Payment Reminder</strong><span class="status status-pending" style="float:right">Scheduled</span><p>Reminder scheduled for parents with pending fees.</p></div></div></div>
+      </div>
+
+      <div id="view-transport" class="view">
+        <div class="page-head"><div><h2>Transport</h2><p>Manage vehicles, routes, drivers and student assignments.</p></div><button class="btn btn-primary" onclick="openModal('vehicleModal')">＋ <span class="label">Add Vehicle</span></button></div>
+        <div class="grid three"><div class="card stat"><div><div class="stat-label">Vehicles</div><div class="stat-value">8</div><div class="stat-note positive">7 active</div></div><div class="stat-icon">🚌</div></div><div class="card stat"><div><div class="stat-label">Routes</div><div class="stat-value">12</div></div><div class="stat-icon">📍</div></div><div class="card stat"><div><div class="stat-label">Students Using Bus</div><div class="stat-value">286</div></div><div class="stat-icon">🎓</div></div></div>
+        <div class="card table-card"><div class="table-tools"><div class="search"><span>⌕</span><input oninput="filterTable('transportTable',this.value)" placeholder="Search route or vehicle..."></div></div><div class="table-wrap"><table id="transportTable"><thead><tr><th>Vehicle</th><th>Registration</th><th>Route</th><th>Driver</th><th>Students</th><th>Status</th></tr></thead><tbody><tr><td>Bus 01</td><td>KL-11-A-1001</td><td>North Route</td><td>Manoj Kumar</td><td>42</td><td><span class="status status-active">Active</span></td></tr><tr><td>Bus 02</td><td>KL-11-A-1002</td><td>South Route</td><td>Rajan P.</td><td>38</td><td><span class="status status-active">Active</span></td></tr><tr><td>Bus 03</td><td>KL-11-A-1003</td><td>East Route</td><td>Suresh K.</td><td>36</td><td><span class="status status-pending">Service</span></td></tr></tbody></table></div></div>
+        <div class="card table-card" style="margin-top:16px">
+          <div class="card-head"><h3>Student Transport Assignments</h3><button class="btn btn-sm btn-primary" onclick="openTransportAssignmentModal()">＋ Assign Student</button></div>
+          <div class="table-wrap"><table id="transportAssignmentTable"><thead><tr><th>Student</th><th>Class</th><th>Admission No.</th><th>Registration No.</th><th>Vehicle</th><th>Vehicle Reg. No.</th><th>Route</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </div>
+
+      <div id="view-library" class="view">
+        <div class="page-head"><div><h2>Library</h2><p>Manage books, issues, returns and fines.</p></div><button class="btn btn-primary" onclick="openModal('bookModal')">＋ <span class="label">Add Book</span></button></div>
+        <div class="grid stats"><div class="card stat"><div><div class="stat-label">Total Books</div><div class="stat-value">4,820</div></div><div class="stat-icon">📖</div></div><div class="card stat"><div><div class="stat-label">Issued</div><div class="stat-value">638</div></div><div class="stat-icon">↗</div></div><div class="card stat"><div><div class="stat-label">Overdue</div><div class="stat-value">27</div><div class="stat-note warning">Needs attention</div></div><div class="stat-icon">!</div></div></div>
+        <div class="card table-card"><div class="table-tools"><div class="search"><span>⌕</span><input id="librarySearch" oninput="filterLibrary()" placeholder="Search book, author or student..."></div><select id="libraryCategoryFilter" onchange="filterLibrary()"><option value="all">All categories</option></select></div><div class="table-wrap"><table id="libraryTable"><thead><tr><th>Book</th><th>Author</th><th>Category</th><th>Copies</th><th>Issued To</th><th>Due Date</th></tr></thead><tbody><tr><td><strong>Physics Fundamentals</strong></td><td>R. K. Gupta</td><td>Science</td><td>8</td><td>Aarav Sharma</td><td>05 Sep 2026</td></tr><tr><td><strong>The Blue Umbrella</strong></td><td>Ruskin Bond</td><td>Literature</td><td>12</td><td>—</td><td>—</td></tr><tr><td><strong>Advanced Mathematics</strong></td><td>S. Chand</td><td>Mathematics</td><td>10</td><td>Rohan Kumar</td><td>01 Sep 2026</td></tr></tbody></table></div></div>
+      </div>
+
+      <div id="view-reports" class="view">
+        <div class="page-head"><div><h2>Reports</h2><p>Generate, print and export school reports.</p></div></div>
+        <div class="grid three">
+          <div class="card"><div class="card-head"><h3>Student Report</h3>👨‍🎓</div><div class="card-body"><p style="font-size:12px;color:#64748b">Student profile, class and parent information.</p><button class="btn btn-sm" onclick="printSpecificReport('student')">Generate &amp; Print</button></div></div>
+          <div class="card"><div class="card-head"><h3>Attendance Report</h3>✓</div><div class="card-body"><p style="font-size:12px;color:#64748b">Daily, monthly and class-wise attendance.</p><button class="btn btn-sm" onclick="printSpecificReport('attendance')">Generate &amp; Print</button></div></div>
+          <div class="card"><div class="card-head"><h3>Fee Collection</h3>₹</div><div class="card-body"><p style="font-size:12px;color:#64748b">Collection, pending dues and payment history.</p><button class="btn btn-sm" onclick="printSpecificReport('fees')">Generate &amp; Print</button></div></div>
+          <div class="card"><div class="card-head"><h3>Exam Results</h3>🏆</div><div class="card-body"><p style="font-size:12px;color:#64748b">Marks, grades, percentage and rank.</p><button class="btn btn-sm" onclick="printSpecificReport('exams')">Generate &amp; Print</button></div></div>
+          <div class="card"><div class="card-head"><h3>Staff Report</h3>👩‍🏫</div><div class="card-body"><p style="font-size:12px;color:#64748b">Employee details, attendance and leave.</p><button class="btn btn-sm" onclick="printSpecificReport('staff')">Generate &amp; Print</button></div></div>
+          <div class="card"><div class="card-head"><h3>Transport Report</h3>🚌</div><div class="card-body"><p style="font-size:12px;color:#64748b">Vehicles, routes and assigned students.</p><button class="btn btn-sm" onclick="printSpecificReport('transport')">Generate &amp; Print</button></div></div>
+        </div>
+      </div>
+
+      <div id="view-school-management" class="view super-only">
+  <div class="page-head"><div><h2>Schools &amp; Admins</h2><p>Super Admin control panel for schools and their School Admin accounts.</p></div><button class="btn btn-primary" onclick="openSchoolAdminModal()">+ Add School Admin</button></div>
+  <div class="grid two">
+    <div class="card"><div class="card-head"><h3>Schools</h3><span class="role-pill" id="schoolCountPill">0 schools</span></div><div class="card-body"><div id="schoolsList" class="admin-list"></div></div></div>
+    <div class="card"><div class="card-head"><h3>School Admin Accounts</h3><span class="role-pill" id="adminCountPill">0 admins</span></div><div class="card-body"><div id="schoolAdminsList" class="admin-list"></div></div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><div class="card-head"><h3>Access hierarchy</h3></div><div class="card-body"><div class="role-grid"><div><span class="role-pill">Super Admin</span><p style="color:#64748b;font-size:13px">Creates and manages schools, creates/activates School Admin accounts, and controls platform-level access.</p></div><div><span class="role-pill">School Admin</span><p style="color:#64748b;font-size:13px">Manages students, staff, academics, attendance, fees, transport, library and reports for the assigned school.</p></div></div></div></div>
+</div>
+
+<div id="schoolAdminModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Add School / School Admin</h3><button class="close" onclick="closeModal('schoolAdminModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>School Name</label><input id="saSchoolName" placeholder="School name"></div><div class="field"><label>School Code</label><input id="saSchoolCode" placeholder="SCH-001"></div><div class="field"><label>Admin Name</label><input id="saAdminName" placeholder="School administrator"></div><div class="field"><label>Admin Email</label><input id="saAdminEmail" type="email" placeholder="admin@school.edu"></div><div class="field"><label>Temporary Password</label><input id="saAdminPassword" type="text" value="admin123"></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('schoolAdminModal')">Cancel</button><button class="btn btn-primary" onclick="saveSchoolAdmin()">Create School Admin</button></div></div></div>
+
+<div id="view-settings" class="view">
+        <div class="page-head"><div><h2>Settings</h2><p>Configure your school and application preferences.</p></div><button class="btn btn-primary" onclick="saveSettings()">Save Changes</button></div>
+        <div class="grid two">
+          <div class="card"><div class="card-head"><h3>School Profile</h3></div><div class="card-body"><div class="form-grid"><div class="field"><label>School Name</label><input id="schoolName" value="Green Valley Public School"></div><div class="field"><label>School Code</label><input id="schoolCode" value="GVPS-001"></div><div class="field"><label>Phone</label><input id="schoolPhone" value="+91 98765 00000"></div><div class="field"><label>Email</label><input id="schoolEmail" value="office@greenvalley.edu"></div><div class="field full"><label>Address</label><textarea id="schoolAddress" rows="3">School Road, Kerala, India</textarea></div></div></div></div>
+          <div class="card"><div class="card-head"><h3>Academic Settings</h3></div><div class="card-body"><div class="form-grid"><div class="field"><label>Current Academic Year</label><select><option>2026–27</option><option>2027–28</option></select></div><div class="field"><label>Default Currency</label><select><option>INR (₹)</option></select></div><div class="field"><label>Attendance Rule</label><select><option>Daily</option><option>Period-wise</option></select></div><div class="field"><label>Grading System</label><select><option>A+ to E</option><option>Percentage</option></select></div></div></div></div>
+          <div class="card"><div class="card-head"><h3>User Roles &amp; Permissions</h3></div><div class="card-body"><div class="list"><div class="list-row"><strong>Admin</strong><span class="status status-active">Full Access</span></div><div class="list-row"><strong>Principal</strong><span class="status status-active">Academic + Reports</span></div><div class="list-row"><strong>Accountant</strong><span class="status status-active">Fees + Reports</span></div><div class="list-row"><strong>Teacher</strong><span class="status status-active">Assigned Classes</span></div><div class="list-row"><strong>Parent / Student</strong><span class="status status-pending">Portal Only</span></div></div></div></div>
+          <div class="card"><div class="card-head"><h3>Notifications</h3></div><div class="card-body"><div class="list"><div class="list-row"><span>Fee reminders</span><input type="checkbox" checked></div><div class="list-row"><span>Attendance alerts</span><input type="checkbox" checked></div><div class="list-row"><span>Exam results</span><input type="checkbox" checked></div><div class="list-row"><span>School announcements</span><input type="checkbox" checked></div></div></div></div>
+        </div>
+      </div>
+    </section>
+  
+<div id="superAdminImportPanel" class="card super-only import-only" style="margin-top:16px">
+  <div class="card-head"><h3>Data Management</h3><span class="role-pill">Super Admin Only</span></div>
+  <div class="card-body">
+    <p style="margin:0 0 14px;color:#64748b">Import an existing school's records from one Excel workbook. Existing records are not changed until you confirm the import.</p>
+    <div id="superImportTargetWrap" class="super-only" style="align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+      <label style="font-weight:600">School Data / Import For School</label>
+      <select id="superImportSchoolSelect" style="min-width:280px;padding:10px;border:1px solid var(--border);border-radius:9px;background:#fff"></select>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" onclick="downloadSchoolImportTemplate()">Download Excel Template</button>
+      <button class="btn btn-primary" onclick="document.getElementById('schoolImportFile').click()">Import School Data</button>
+      <input id="schoolImportFile" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="previewSchoolImport(event)">
+    </div>
+    <div id="schoolImportStatus" style="margin-top:14px"></div>
+  </div>
+</div>
+
+</main>
+
+  <nav class="mobile-nav">
+    <button class="active" data-view="dashboard">▦<span>Home</span></button>
+    <button data-view="students">🎓<span>Students</span></button>
+    <button data-view="attendance">✓<span>Attendance</span></button>
+    <button data-view="fees">₹<span>Fees</span></button>
+    <button onclick="toggleSidebar()">☰<span>Menu</span></button>
+  </nav>
+</div>
+
+<!-- Modals -->
+<div id="studentModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Add Student</h3><button class="close" onclick="closeModal('studentModal')">×</button></div><div class="modal-body"><div class="form-grid">
+<div class="field"><label>Student Name *</label><input placeholder="Full name"></div><div class="field"><label>Admission Number *</label><input placeholder="ADM-2026-001"></div>
+<div class="field"><label>Date of Birth</label><input type="date"></div><div class="field"><label>Gender</label><select><option>Male</option><option>Female</option><option>Other</option></select></div>
+<div class="field"><label>Class</label><select><option>LKG</option><option>UKG</option><option>1st Std</option><option>2nd Std</option><option>3rd Std</option><option>4th Std</option></select></div><div class="field"><label>Division</label><select><option>A</option><option>B</option><option>C</option></select></div><div class="field"><label>Academic Grade</label><input name="academicGrade" placeholder="e.g. A+, A, B+"></div>
+<div class="field"><label>Parent / Guardian</label><input placeholder="Parent name"></div><div class="field"><label>Phone</label><input placeholder="10-digit mobile"></div>
+<div class="field"><label>Uses Transport?</label><select id="studentTransport"><option>No</option><option>Yes</option></select></div>
+<div class="field"><label>Vehicle</label><select id="studentVehicle"><option value="">Select vehicle</option></select></div>
+<div class="field"><label>Route</label><select id="studentRoute"><option value="">Select route</option></select></div>
+<div class="field full"><label>Address</label><textarea rows="3" placeholder="Residential address"></textarea></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('studentModal')">Cancel</button><button class="btn btn-primary" onclick="saveModal('studentModal','Student added successfully')">Save Student</button></div></div></div>
+
+<div id="paymentModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Record Fee Payment</h3><button class="close" onclick="closeModal('paymentModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Student *</label><select><option>Aarav Sharma</option><option>Ananya Menon</option><option>Rohan Kumar</option></select></div><div class="field"><label>Fee Type</label><select><option>School Fee</option><option>Transportation</option><option>Music</option><option>Dance</option><option>Karate</option><option>Exam Fee</option><option>Other</option></select></div><div class="field"><label>Amount *</label><input type="number" placeholder="0.00"></div><div class="field"><label>Payment Date</label><input type="date" value="2026-08-29"></div><div class="field"><label>Payment Method</label><select><option>Cash</option><option>Bank Transfer</option><option>UPI</option><option>Card</option><option>Cheque</option></select></div><div class="field"><label>Reference / Receipt No.</label><input placeholder="Optional"></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('paymentModal')">Cancel</button><button class="btn btn-primary" onclick="saveModal('paymentModal','Payment recorded successfully')">Save Payment</button></div></div></div>
+
+<div id="noticeModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Create Notice</h3><button class="close" onclick="closeModal('noticeModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Title *</label><input placeholder="Notice title"></div><div class="field"><label>Audience</label><select><option>All</option><option>Parents</option><option>Students</option><option>Teachers</option></select></div><div class="field"><label>Publish Date</label><input type="date" value="2026-08-29"></div><div class="field full"><label>Message *</label><textarea rows="5" placeholder="Write your announcement..."></textarea></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('noticeModal')">Cancel</button><button class="btn btn-primary" onclick="saveModal('noticeModal','Notice published successfully')">Publish Notice</button></div></div></div>
+
+<div id="staffModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Add Staff</h3><button class="close" onclick="closeModal('staffModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Name *</label><input placeholder="Staff name"></div><div class="field"><label>Employee ID</label><input placeholder="EMP-001"></div><div class="field"><label>Designation</label><select><option>Teacher</option><option>Senior Teacher</option><option>Principal</option><option>Accountant</option><option>Support Staff</option></select></div><div class="field"><label>Phone</label><input placeholder="10-digit mobile"></div><div class="field"><label>Email</label><input type="email"></div><div class="field"><label>Subject</label><input placeholder="Mathematics"></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('staffModal')">Cancel</button><button class="btn btn-primary" onclick="saveModal('staffModal','Staff member added')">Save Staff</button></div></div></div>
+
+<div id="classModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Add Class / Division</h3><button class="close" onclick="closeModal('classModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Grade</label><select><option>LKG</option><option>UKG</option><option>1st Std</option><option>2nd Std</option><option>3rd Std</option><option>4th Std</option></select></div><div class="field"><label>Division</label><input placeholder="A"></div><div class="field"><label>Class Teacher</label><select><option>Ramesh Singh</option><option>Priya Menon</option></select></div><div class="field"><label>Room</label><input placeholder="Room 204"></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('classModal')">Cancel</button><button class="btn btn-primary" onclick="saveModal('classModal','Class created successfully')">Create Class</button></div></div></div>
+
+<div id="examModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Create Examination</h3><button class="close" onclick="closeModal('examModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Exam Name</label><input placeholder="Term 1 Examination"></div><div class="field"><label>Start Date</label><input type="date"></div><div class="field"><label>End Date</label><input type="date"></div><div class="field"><label>Classes</label><select><option>All Classes</option><option>Pre-Primary (LKG–UKG)</option><option>Lower Primary (1st–4th)</option></select></div><div class="field"><label>Maximum Marks</label><input type="number" value="100"></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('examModal')">Cancel</button><button class="btn btn-primary" onclick="saveModal('examModal','Examination created')">Create Exam</button></div></div></div>
+
+<div id="homeworkModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Add Homework</h3><button class="close" onclick="closeModal('homeworkModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Title</label><input placeholder="Assignment title"></div><div class="field"><label>Subject</label><select><option>Mathematics</option><option>English</option><option>Science</option></select></div><div class="field"><label>Class</label><select><option>1st Std-A</option><option>2nd Std-B</option><option>3rd Std-C</option><option>4th Std-A</option></select></div><div class="field"><label>Due Date</label><input type="date"></div><div class="field full"><label>Description</label><textarea rows="4" placeholder="Assignment instructions"></textarea></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('homeworkModal')">Cancel</button><button class="btn btn-primary" onclick="saveModal('homeworkModal','Homework created')">Create Homework</button></div></div></div>
+
+<div id="vehicleModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Add Vehicle</h3><button class="close" onclick="closeModal('vehicleModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="field"><label>Vehicle Name</label><input placeholder="Bus 01"></div><div class="field"><label>Registration No.</label><input placeholder="KL-11-A-1001"></div><div class="field"><label>Driver</label><input placeholder="Driver name"></div><div class="field"><label>Route</label><input placeholder="North Route"></div><div class="field"><label>Capacity</label><input type="number" placeholder="45"></div><div class="field"><label>Status</label><select><option>Active</option><option>Service</option><option>Inactive</option></select></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('vehicleModal')">Cancel</button><button class="btn btn-primary" onclick="saveModal('vehicleModal','Vehicle added successfully')">Save Vehicle</button></div></div></div>
+
+<div id="bookModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Add Library Book</h3><button class="close" onclick="closeModal('bookModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="field full"><label>Book Title</label><input placeholder="Book title"></div><div class="field"><label>Author</label><input placeholder="Author"></div><div class="field"><label>Category</label><select><option>Science</option><option>Literature</option><option>Mathematics</option><option>History</option></select></div><div class="field"><label>ISBN</label><input placeholder="ISBN"></div><div class="field"><label>Copies</label><input type="number" value="1"></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('bookModal')">Cancel</button><button class="btn btn-primary" onclick="saveModal('bookModal','Book added successfully')">Save Book</button></div></div></div>
+
+<div id="quickModal" class="modal-backdrop"><div class="modal"><div class="modal-head"><h3>Quick Action</h3><button class="close" onclick="closeModal('quickModal')">×</button></div><div class="modal-body"><div class="quick"><button onclick="closeModal('quickModal');openModal('studentModal')"><b>＋</b>Add Student</button><button onclick="closeModal('quickModal');openModal('paymentModal')"><b>₹</b>Payment</button><button onclick="closeModal('quickModal');navigate('attendance')"><b>✓</b>Attendance</button><button onclick="closeModal('quickModal');openModal('noticeModal')"><b>📢</b>Notice</button></div></div></div></div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const titles={dashboard:'Dashboard',students:'Students',staff:'Teachers & Staff',academics:'Classes & Academics',attendance:'Attendance',fees:'Fees & Payments',exams:'Exams & Results',homework:'Homework',notices:'Notices & Communication',transport:'Transport',library:'Library',reports:'Reports', 'school-management':'Schools & Admins', settings:'Settings'};
+function navigate(view){
+ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+ const el=document.getElementById('view-'+view);if(el)el.classList.add('active');
+ document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+ document.getElementById('pageTitle').textContent=titles[view]||'Dashboard';
+ document.getElementById('sidebar').classList.remove('open');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function saveModal(id,msg){closeModal(id);showToast(msg)}
+document.querySelectorAll('.modal-backdrop').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2600)}
+function filterTable(id,value){const q=value.toLowerCase();document.querySelectorAll('#'+id+' tbody tr').forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?'':'none')}
+function viewStudent(name){showToast('Opening profile for '+name)}
+function updateAttendanceSummary(){
+  const rows=[...document.querySelectorAll('#attendanceTable tbody tr')].filter(r=>r.style.display!=='none');
+  const total=rows.length;
+  const counts={Present:0,Absent:0,Leave:0};
+  rows.forEach(r=>{
+    const v=r.querySelector('.att')?.value||'Present';
+    if(Object.prototype.hasOwnProperty.call(counts,v)) counts[v]++;
+  });
+  const cards=document.querySelectorAll('#view-attendance .stat-value');
+  const subs=document.querySelectorAll('#view-attendance .stat-value + div, #view-attendance .stat-value + p, #view-attendance .stat-subtitle');
+  if(cards[0]) cards[0].textContent=counts.Present;
+  if(cards[1]) cards[1].textContent=counts.Absent;
+  if(cards[2]) cards[2].textContent=counts.Leave;
+
+  // Update the percentage text directly under each attendance card.
+  const cardNodes=[...document.querySelectorAll('#view-attendance .grid.three .card, #view-attendance .grid.three > .card')];
+  cardNodes.forEach((card,i)=>{
+    const status=['Present','Absent','Leave'][i];
+    if(!status)return;
+    const pct=total ? ((counts[status]/total)*100).toFixed(1)+'%' : '0.0%';
+    const value=card.querySelector('.stat-value');
+    if(!value)return;
+    let sub=value.parentElement?.querySelector('.stat-sub');
+    if(!sub){
+      sub=card.querySelector('.stat-sub, .stat-note');
+    }
+    if(sub) sub.textContent=pct;
+    else{
+      const candidates=[...card.querySelectorAll('div,p,span')].filter(x=>x!==value && x.textContent.trim().match(/^\d+(\.\d+)?%$/));
+      if(candidates.length) candidates[0].textContent=pct;
+    }
+  });
+}
+function markAttendance(){
+  const rows=[...document.querySelectorAll('#attendanceTable tbody tr')];
+  const date=document.querySelector('#view-attendance input[type=date]')?.value||new Date().toISOString().slice(0,10);
+  if(!Array.isArray(sm.attendance)) sm.attendance=[];
+  rows.forEach(r=>{
+    const adm=r.cells[1]?.innerText.trim();
+    const status=r.querySelector('.att')?.value||'Present';
+    if(!adm)return;
+    sm.attendance=sm.attendance.filter(a=>!(String(a.studentAdmissionNo||'')===String(adm)&&String(a.date||'')===String(date)));
+    sm.attendance.push({studentAdmissionNo:adm,date,status});
+  });
+  smSave();
+  updateAttendanceSummary();
+  showToast('Attendance saved for '+date);
+}
+document.addEventListener('change',function(e){
+  if(e.target && e.target.matches('#attendanceTable .att')) updateAttendanceSummary();
+  if(e.target && e.target.matches('#view-attendance input[type="date"]')) renderImportedAttendance();
+});
+document.addEventListener('input',function(e){
+  if(e.target && e.target.matches('#view-attendance .search input')) setTimeout(updateAttendanceSummary,0);
+});
+function saveSettings(){
+  const profile = {
+    name: document.getElementById('schoolName')?.value.trim() || '',
+    code: document.getElementById('schoolCode')?.value.trim() || '',
+    phone: document.getElementById('schoolPhone')?.value.trim() || '',
+    email: document.getElementById('schoolEmail')?.value.trim() || '',
+    address: document.getElementById('schoolAddress')?.value.trim() || ''
+  };
+  if(!profile.name){showToast('School name is required');return}
+  try{
+    localStorage.setItem('schoolProfile__'+getCurrentSchoolId(), JSON.stringify(profile));
+    showToast('School profile saved successfully');
+  }catch(e){
+    showToast('Unable to save school profile');
+  }
+}
+function printReceipt(name,amount){const w=window.open('','_blank','width=700,height=700');w.document.write(`<html><head><title>Fee Receipt</title><style>body{font-family:Arial;padding:40px;color:#111}h1{margin-bottom:4px}.box{border:1px solid #ddd;padding:20px;margin-top:25px}table{width:100%;border-collapse:collapse}td{padding:12px;border-bottom:1px solid #eee}</style></head><body><h1>School Fee Receipt</h1><p>${getSchoolProfile().name}</p><div class="box"><table><tr><td>Student</td><td><b>${name}</b></td></tr><tr><td>Amount Paid</td><td><b>${amount}</b></td></tr><tr><td>Date</td><td>29 Aug 2026</td></tr><tr><td>Status</td><td>PAID</td></tr></table></div><p style="margin-top:40px">Computer generated receipt.</p></body></html>`);w.document.close();setTimeout(()=>w.print(),250)}
+function printReport(){const w=window.open('','_blank','width=900,height=700');w.document.write(`<html><head><title>School Report</title><style>body{font-family:Arial;padding:30px}table{width:100%;border-collapse:collapse;margin-top:20px}th,td{padding:10px;border:1px solid #ddd;text-align:left}h1{margin-bottom:4px}</style></head><body><h1>${getSchoolProfile().name}</h1><p>School Management Report • 29 August 2026</p><table><tr><th>Metric</th><th>Value</th></tr><tr><td>Total Students</td><td>850</td></tr><tr><td>Attendance Today</td><td>94.2%</td></tr><tr><td>Fee Collection</td><td>₹8.42L</td></tr><tr><td>Pending Fees</td><td>₹3.94L</td></tr></table></body></html>`);w.document.close();setTimeout(()=>w.print(),250)}
+document.getElementById('loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPassword').focus()});document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+
+/* ===== Local interactive data layer (ready for Supabase wiring later) ===== */
+const SM_BASE_KEY='schoolManagementLocal_v2';
+const seed={
+ students:[
+  {name:'Aarav Sharma',adm:'ADM-2021-001',grade:'Grade 8',div:'A',parent:'Rajesh Sharma',phone:'98765 43210',dob:'2012-06-15',gender:'Male',address:'Kozhikode, Kerala',status:'Active',transport:'Yes',vehicle:'Bus 01',route:'North Route'},
+  {name:'Ananya Menon',adm:'ADM-2022-017',grade:'Grade 6',div:'B',parent:'Suresh Menon',phone:'98470 11223',dob:'2014-03-21',gender:'Female',address:'Kozhikode, Kerala',status:'Active',transport:'Yes',vehicle:'Bus 02',route:'South Route'},
+  {name:'Rohan Kumar',adm:'ADM-2023-041',grade:'Grade 10',div:'A',parent:'Vijay Kumar',phone:'98950 34567',dob:'2010-09-08',gender:'Male',address:'Kannur, Kerala',status:'Active',transport:'No',vehicle:'',route:''},
+  {name:'Niya Suresh',adm:'ADM-2024-006',grade:'Grade 3',div:'C',parent:'Meera Suresh',phone:'96050 77881',dob:'2017-01-12',gender:'Female',address:'Malappuram, Kerala',status:'Active',transport:'Yes',vehicle:'Bus 03',route:'East Route'}
+ ],
+ staff:[{name:'Ramesh Singh',id:'EMP-001',designation:'Senior Teacher',subject:'Mathematics',phone:'98765 10001',email:''},{name:'Priya Menon',id:'EMP-002',designation:'Teacher',subject:'English',phone:'98470 20002',email:''},{name:'Arun Kumar',id:'EMP-003',designation:'Accountant',subject:'Finance',phone:'98950 30003',email:''}],
+ classes:[], payments:[], exams:[], homework:[], notices:[], vehicles:[{name:'Bus 01',reg:'KL-11-A-1001',driver:'Manoj Kumar',route:'North Route',capacity:45,status:'Active'},{name:'Bus 02',reg:'KL-11-A-1002',driver:'Rajan P.',route:'South Route',capacity:45,status:'Active'},{name:'Bus 03',reg:'KL-11-A-1003',driver:'Suresh K.',route:'East Route',capacity:40,status:'Service'}], books:[], attendance:{}
+};
+function resolveSchoolIdForAdmin(){
+  const rawId=String(localStorage.getItem('schoolUserSchoolId')||'').trim();
+  const rawName=String(localStorage.getItem('schoolUserSchoolName')||'').trim().toLowerCase();
+  const rawCode=String(localStorage.getItem('schoolUserSchoolCode')||'').trim().toLowerCase();
+  let schools=[];
+  try{schools=JSON.parse(localStorage.getItem('managedSchools')||'[]');}catch(e){schools=[];}
+  if(rawId && schools.some(s=>String(s.id)===rawId)) return rawId;
+  if(rawName){const byName=schools.find(s=>String(s.name||'').trim().toLowerCase()===rawName);if(byName)return String(byName.id);}
+  if(rawCode){const byCode=schools.find(s=>String(s.code||'').trim().toLowerCase()===rawCode);if(byCode)return String(byCode.id);}
+  return rawId||'SCH-DEMO';
+}
+function getCurrentSchoolId(){
+  const role=localStorage.getItem('schoolUserRole')||'school_admin';
+  if(role==='super_admin'){
+    const selected=String(localStorage.getItem('superAdminSelectedSchoolId')||'').trim();
+    if(selected)return selected;
+    try{
+      const schools=JSON.parse(localStorage.getItem('managedSchools')||'[]')||[];
+      if(schools.length){
+        const sid=String(schools[0].id||'').trim();
+        if(sid){localStorage.setItem('superAdminSelectedSchoolId',sid);return sid;}
+      }
+    }catch(e){}
+    return 'SCH-DEMO';
+  }
+  return resolveSchoolIdForAdmin();
+}
+function schoolDataKey(schoolId){return SM_BASE_KEY+'__'+String(schoolId||'SCH-DEMO');}
+function schoolSnapshotScore(data){
+  if(!data || typeof data!=='object') return 0;
+  let n=0;
+  Object.values(data).forEach(v=>{ if(Array.isArray(v)) n+=v.length; else if(v&&typeof v==='object') n+=Object.keys(v).length; });
+  return n;
+}
+function mergeSchoolSnapshots(base,...sources){
+  const out=Object.assign(structuredClone(seed),base||{});
+  sources.filter(Boolean).forEach(src=>{
+    Object.keys(src).forEach(k=>{
+      const sv=src[k];
+      if(Array.isArray(sv)){
+        if(!Array.isArray(out[k])) out[k]=[];
+        const target=out[k];
+        sv.forEach(item=>{
+          if(item==null)return;
+          const text=JSON.stringify(item);
+          if(!target.some(x=>JSON.stringify(x)===text)) target.push(item);
+        });
+      }else if(sv&&typeof sv==='object'){
+        out[k]=Object.assign({},out[k]||{},sv);
+      }else if(sv!==undefined && sv!==null && String(sv)!=='') out[k]=sv;
+    });
+  });
+  return out;
+}
+function smLoad(schoolId=getCurrentSchoolId()){
+  const sid=String(schoolId||'SCH-DEMO');
+  try{
+    const key=schoolDataKey(sid);
+    const read=(k)=>{try{const raw=localStorage.getItem(k);return raw?JSON.parse(raw):null;}catch(e){return null;}};
+    const candidates=[];
+    const scoped=read(key); if(scoped)candidates.push(scoped);
+    const registry=read('schoolDataRegistry'); if(registry&&registry[sid])candidates.push(registry[sid]);
+    const shared=read('schoolManagementSharedData'); if(shared&&shared[sid])candidates.push(shared[sid]);
+    // Older builds may have stored the snapshot by school name/code. Recover it
+    // when the ID changed after an admin account was created.
+    try{
+      const schools=read('managedSchools')||[];
+      const school=schools.find(x=>String(x.id)===sid);
+      const aliases=[school?.name,school?.code].filter(Boolean).map(x=>String(x).trim());
+      const aliasStores=['schoolDataByName','schoolManagementDataBySchool'];
+      aliasStores.forEach(storeKey=>{
+        const store=read(storeKey);
+        if(!store)return;
+        aliases.forEach(alias=>{if(store[alias])candidates.push(store[alias]);});
+      });
+    }catch(e){}
+    // If an old generic key exists, only use it for the demo school.
+    if(sid==='SCH-DEMO'){
+      const legacy=read(SM_BASE_KEY); if(legacy)candidates.push(legacy);
+    }
+    if(!candidates.length) return structuredClone(seed);
+    // The previous version could leave a seed-only scoped snapshot while the
+    // registry contained the real imported records. Merge all candidates so
+    // imported records are never hidden by a stale/empty scoped snapshot.
+    const best=candidates.reduce((a,b)=>schoolSnapshotScore(b)>schoolSnapshotScore(a)?b:a,candidates[0]);
+    const data=mergeSchoolSnapshots(best,...candidates.filter(x=>x!==best));
+    // Repair all supported stores immediately so subsequent School Admin loads
+    // read the same school data regardless of which store was created first.
+    localStorage.setItem(key,JSON.stringify(data));
+    try{
+      const reg=read('schoolDataRegistry')||{}; reg[sid]=data; localStorage.setItem('schoolDataRegistry',JSON.stringify(reg));
+      const sh=read('schoolManagementSharedData')||{}; sh[sid]=data; localStorage.setItem('schoolManagementSharedData',JSON.stringify(sh));
+    }catch(e){}
+    return data;
+  }catch(e){console.error('smLoad failed',e);}
+  return structuredClone(seed);
+}
+let sm=smLoad();
+function smSave(schoolId=getCurrentSchoolId()){
+  const sid=String(schoolId||'SCH-DEMO');
+  const snapshot=JSON.parse(JSON.stringify(sm));
+  const serialized=JSON.stringify(snapshot);
+  localStorage.setItem(schoolDataKey(sid),serialized);
+  try{
+    const registry=JSON.parse(localStorage.getItem('schoolDataRegistry')||'{}')||{};
+    registry[sid]=snapshot; localStorage.setItem('schoolDataRegistry',JSON.stringify(registry));
+    const shared=JSON.parse(localStorage.getItem('schoolManagementSharedData')||'{}')||{};
+    shared[sid]=snapshot; localStorage.setItem('schoolManagementSharedData',JSON.stringify(shared));
+    // Name/code aliases make the data recoverable if an admin account was
+    // created before the school received its final ID.
+    const schools=JSON.parse(localStorage.getItem('managedSchools')||'[]')||[];
+    const school=schools.find(x=>String(x.id)===sid);
+    if(school){
+      const byName=JSON.parse(localStorage.getItem('schoolDataByName')||'{}')||{};
+      byName[String(school.name||'').trim()]=snapshot;
+      localStorage.setItem('schoolDataByName',JSON.stringify(byName));
+    }
+    localStorage.setItem('schoolDataVersion__'+sid,String(Date.now()));
+  }catch(e){console.error('shared school save failed',e);}
+}
+function syncSchoolDataToRegistry(schoolId){
+  const sid=String(schoolId||'SCH-DEMO');
+  try{
+    const scoped=localStorage.getItem(schoolDataKey(sid));
+    if(!scoped)return false;
+    let registry={};
+    try{registry=JSON.parse(localStorage.getItem('schoolDataRegistry')||'{}')||{};}catch(e){registry={};}
+    registry[sid]=JSON.parse(scoped);
+    localStorage.setItem('schoolDataRegistry',JSON.stringify(registry));
+    localStorage.setItem('schoolDataVersion__'+sid,String(Date.now()));
+    return true;
+  }catch(e){console.error('school registry sync failed',e);return false;}
+}
+function loadSchoolDataFor(schoolId){
+  const sid=String(schoolId||resolveSchoolIdForAdmin()||'SCH-DEMO');
+  window.__loadedSchoolId=sid;
+  sm=smLoad(sid);
+  // Keep the session pinned to the school actually being loaded.
+  try{
+    localStorage.setItem('schoolUserSchoolId',sid);
+    const schools=JSON.parse(localStorage.getItem('managedSchools')||'[]')||[];
+    const school=schools.find(x=>String(x.id)===sid);
+    if(school){
+      localStorage.setItem('schoolUserSchoolName',String(school.name||''));
+      localStorage.setItem('schoolUserSchoolCode',String(school.code||''));
+    }
+  }catch(e){}
+  normalizeImportedAppData();
+  renderAllImportedTabs();
+  refreshAllSchoolDataViews();
+  if(typeof loadSchoolProfile==='function')loadSchoolProfile();
+}
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function initials(n){return String(n||'?').split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()}
+function fields(modal){return [...document.querySelectorAll('#'+modal+' input, #'+modal+' select, #'+modal+' textarea')].map(x=>x.value.trim())}
+function resetModal(id){document.querySelectorAll('#'+id+' input, #'+id+' textarea').forEach(x=>{if(x.type!=='date')x.value='';});}
+function normalizeSchoolClass(value){
+  const s=String(value??'').trim().toLowerCase().replace(/\s+/g,' ');
+  if(!s)return '';
+  if(s==='lkg'||s.includes('l.k.g'))return 'LKG';
+  if(s==='ukg'||s.includes('u.k.g'))return 'UKG';
+  if(/^(1|1st|first)(\s*(std|standard|class|grade))?$/.test(s)||s.includes('1st std')||s.includes('grade 1'))return '1st Std';
+  if(/^(2|2nd|second)(\s*(std|standard|class|grade))?$/.test(s)||s.includes('2nd std')||s.includes('grade 2'))return '2nd Std';
+  if(/^(3|3rd|third)(\s*(std|standard|class|grade))?$/.test(s)||s.includes('3rd std')||s.includes('grade 3'))return '3rd Std';
+  if(/^(4|4th|fourth)(\s*(std|standard|class|grade))?$/.test(s)||s.includes('4th std')||s.includes('grade 4'))return '4th Std';
+  return String(value??'').trim();
+}
+function renderStudents(){
+  const tb=document.querySelector('#studentTable tbody');if(!tb)return;
+  const classFilter=document.getElementById('studentClassFilter')?.value||'';
+  const statusFilter=document.getElementById('studentStatusFilter')?.value||'';
+  const search=(document.getElementById('studentSearch')?.value||'').toLowerCase().trim();
+  const rows=sm.students.filter(x=>{
+    const cls=normalizeSchoolClass(x.grade||x.className||x.class||'');
+    const status=String(x.status||'Active');
+    const hay=[x.name,x.adm,x.registrationNo,x.parent,x.phone,cls,status].join(' ').toLowerCase();
+    return (!classFilter||cls===classFilter) &&
+           (!statusFilter||status===statusFilter) &&
+           (!search||hay.includes(search));
+  });
+  tb.innerHTML=rows.map((x)=>`<tr><td><div class="student-cell"><div class="avatar-sm">${initials(x.name)}</div><div><strong>${esc(x.name)}</strong><small style="display:block;color:#64748b">ID: ${esc(x.adm)}</small></div></div></td><td>${esc(x.adm)}</td><td>${esc(normalizeSchoolClass(x.grade||x.className||x.class||''))}-${esc(x.div)}</td><td>${esc(x.parent)}<br><small>${esc(x.phone)}</small></td><td><span class="status ${String(x.status||'Active')==='Inactive'?'status-pending':'status-active'}">${esc(x.status||'Active')}</span></td><td><div class="actions"><button class="action" onclick="viewStudent(${JSON.stringify(x.name)})">View</button><button class="action" onclick="editStudentByAdmission(${JSON.stringify(x.adm)})">Edit</button><button class="action" onclick="deleteStudentByAdmission(${JSON.stringify(x.adm)})">Delete</button></div></td></tr>`).join('') ||
+    `<tr><td colspan="6"><div class="empty">No students found for the selected class/status.</div></td></tr>`;
+  updateDashboard();renderTransportAssignments();
+}
+function filterStudentsByClass(value){ renderStudents(); }
+function filterStudentsByStatus(value){ renderStudents(); }
+function editStudentByAdmission(adm){
+  const idx=sm.students.findIndex(s=>String(s.adm)===String(adm));
+  if(idx<0){showToast('Student record not found');return;}
+  editStudent(idx);
+}
+function deleteStudentByAdmission(adm){
+  const idx=sm.students.findIndex(s=>String(s.adm)===String(adm));
+  if(idx<0){showToast('Student record not found');return;}
+  deleteStudent(idx);
+}
+function renderStaff(){
+  const tb=document.querySelector('#staffTable tbody');
+  if(!tb)return;
+  const selected=(document.getElementById('staffDesignationFilter')?.value||'').trim().toLowerCase();
+  const search=(document.getElementById('staffSearch')?.value||'').trim().toLowerCase();
+
+  const rows=(Array.isArray(sm.staff)?sm.staff:[]).filter(s=>{
+    const designation=String(s.designation||'').trim();
+    const hay=[
+      s.name, s.id, designation, s.subject, s.phone, s.email, s.status
+    ].join(' ').toLowerCase();
+
+    const designationOK=!selected || designation.toLowerCase()===selected;
+    const searchOK=!search || hay.includes(search);
+    return designationOK && searchOK;
+  });
+
+  tb.innerHTML=rows.map(s=>`<tr>
+    <td><div class="student-cell"><div class="avatar-sm">${initials(s.name)}</div><strong>${esc(s.name||'')}</strong></div></td>
+    <td>${esc(s.id||'')}</td>
+    <td><strong>${esc(s.designation||'')}</strong></td>
+    <td>${esc(s.subject||'')}</td>
+    <td>${esc(s.phone||'')}</td>
+    <td><span class="status ${String(s.status||'Active').toLowerCase()==='inactive'?'status-pending':'status-active'}">${esc(s.status||'Active')}</span></td>
+  </tr>`).join('') ||
+  `<tr><td colspan="6"><div class="empty">No staff found for this designation.</div></td></tr>`;
+}
+function filterStaffByDesignation(value){
+  renderStaff();
+}
+function renderPayments(){const tb=document.querySelector('#feeTable tbody');if(!tb||!sm.payments.length)return;const old=tb.innerHTML;tb.innerHTML=sm.payments.map((p,i)=>`<tr><td><strong>${esc(p.student)}</strong><small style="display:block;color:#64748b">Local entry</small></td><td>${esc(p.type)}</td><td>₹${Number(p.amount).toLocaleString('en-IN')}</td><td>₹${Number(p.amount).toLocaleString('en-IN')}</td><td>₹0</td><td>${esc(p.date)}</td><td><span class="status status-paid">Paid</span></td><td><button class="action" onclick="printReceipt(${JSON.stringify(p.student)},${JSON.stringify('₹'+Number(p.amount).toLocaleString('en-IN'))})">Print</button></td></tr>`).join('')+old;}
+function renderNotices(){const box=document.querySelector('#view-notices .card-body');if(!box||!sm.notices.length)return;const existing=box.innerHTML;box.innerHTML=sm.notices.slice().reverse().map(n=>`<div class="notice"><strong>${esc(n.title)}</strong><span class="status status-active" style="float:right">Published</span><p>${esc(n.message)} Audience: ${esc(n.audience)} • ${esc(n.date)}</p></div>`).join('')+existing;}
+function renderTransport(){const tb=document.querySelector('#transportTable tbody');if(tb){tb.innerHTML=sm.vehicles.map(v=>{const count=sm.students.filter(s=>s.transport==='Yes'&&s.vehicle===v.name).length;return `<tr><td>${esc(v.name)}</td><td>${esc(v.reg)}</td><td>${esc(v.route)}</td><td>${esc(v.driver)}</td><td>${count}</td><td><span class="status ${v.status==='Active'?'status-active':'status-pending'}">${esc(v.status)}</span></td></tr>`}).join('');}renderTransportAssignments();updateTransportStats();}
+function renderTransportAssignments(){const tb=document.querySelector('#transportAssignmentTable tbody');if(!tb)return;const assigned=sm.students.filter(s=>s.transport==='Yes'&&s.vehicle&&s.route);tb.innerHTML=assigned.length?assigned.map((x)=>`<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.grade)}-${esc(x.div)}</td><td>${esc(x.adm)}</td><td>${esc(x.registrationNo||x.registrationNumber||x.regNo||x.registration||'—')}</td><td><strong>${esc(x.vehicle)}</strong></td><td>${esc((sm.vehicles.find(v=>v.name===x.vehicle)?.registrationNo||sm.vehicles.find(v=>v.name===x.vehicle)?.registrationNumber||sm.vehicles.find(v=>v.name===x.vehicle)?.regNo||sm.vehicles.find(v=>v.name===x.vehicle)?.regNumber||'—'))}</td><td><strong>${esc(x.route)}</strong></td><td><button class="action" onclick="editStudentByName(${JSON.stringify(x.name)})">Edit</button></td></tr>`).join(''):`<tr><td colspan="8"><div class="empty">No students have been assigned to transport yet.</div></td></tr>`;}
+function updateTransportStats(){const assigned=sm.students.filter(s=>s.transport==='Yes'&&s.vehicle&&s.route).length;const cards=document.querySelectorAll('#view-transport .stat-value');if(cards.length>=3){cards[0].textContent=sm.vehicles.length||0;cards[1].textContent=new Set(sm.vehicles.map(v=>v.route).filter(Boolean)).size;cards[2].textContent=assigned;}}
+function editStudentByName(name){
+  const student=sm.students.find(s=>s.name===name);
+  if(!student){showToast('Student record not found');return;}
+  populateTransportAssignmentStudents();
+  populateTransportAssignmentVehicles();
+
+  const students=sm.students.filter(x=>x.status!=='Inactive');
+  const idx=students.findIndex(x=>x.adm===student.adm);
+
+  const ss=document.getElementById('transportStudentSelect');
+  const ad=document.getElementById('transportAdmissionDisplay');
+  const cl=document.getElementById('transportClassDisplay');
+  const ve=document.getElementById('transportAssignVehicle');
+  const ro=document.getElementById('transportAssignRoute');
+
+  if(idx<0||!ss||!ad||!cl||!ve||!ro){
+    showToast('Unable to open transport assignment');
+    return;
+  }
+
+  ss.value=String(idx);
+  syncTransportStudentDetails();
+  ve.value=student.vehicle||'';
+  syncTransportVehicleDetails();
+  if(ve.value) syncTransportRoute();
+  ro.value=student.route||'';
+
+  document.getElementById('transportAssignmentModal').dataset.editAdmission=student.adm;
+  const modal=document.getElementById('transportAssignmentModal');
+  modal.querySelector('.modal-head h3').textContent='Edit Transport Assignment';
+  modal.querySelector('.modal-foot .btn-primary').textContent='Update Assignment';
+  openModal('transportAssignmentModal');
+}
+function renderLibrary(){const tb=document.querySelector('#libraryTable tbody');if(!tb||!sm.books.length)return;tb.innerHTML=sm.books.map(b=>`<tr><td><strong>${esc(b.title)}</strong></td><td>${esc(b.author)}</td><td>${esc(b.category)}</td><td>${esc(b.copies)}</td><td>—</td><td>—</td></tr>`).join('')+tb.innerHTML;}
+function updateDashboard(){const first=document.querySelector('#view-dashboard .stats .stat-value');if(first)first.textContent=sm.students.length+846;}
+function editStudent(i){const x=sm.students[i];const m=document.getElementById('studentModal');const q=m.querySelectorAll('input,select,textarea');[q[0].value,q[1].value,q[2].value,q[3].value,q[4].value,q[5].value,q[6].value,q[7].value,q[8].value]=[x.name,x.adm,x.dob,x.gender,x.grade,x.div,x.parent,x.phone,x.address];const transport=m.querySelector('#studentTransport');const vehicle=m.querySelector('#studentVehicle');const route=m.querySelector('#studentRoute');if(transport){transport.value=x.transport||'No';populateTransportFields();vehicle.value=x.vehicle||'';route.value=x.route||'';}const ag=m.querySelector('[name="academicGrade"]');if(ag)ag.value=x.academicGrade||x.resultGrade||'';m.dataset.edit=i;m.querySelector('.modal-head h3').textContent='Edit Student';m.querySelector('.modal-foot .btn-primary').textContent='Update Student';openModal('studentModal')}
+function deleteStudent(i){if(confirm('Delete this student? This only removes the local browser record.')){sm.students.splice(i,1);smSave();renderStudents();showToast('Student deleted')}}
+function saveModal(id,msg){
+ const v=fields(id);let ok=true;
+ if(id==='studentModal'){if(!v[0]||!v[1]){showToast('Student name and admission number are required');return}const ag=document.querySelector('#studentModal [name="academicGrade"]');const x={name:v[0],adm:v[1],dob:v[2],gender:v[3],grade:v[4],div:v[5],parent:v[6],phone:v[7],address:v[8],transport:v[9]||'No',vehicle:v[10]||'',route:v[11]||'',status:'Active',academicGrade:ag?ag.value.trim():''};if(x.transport==='Yes'&&(!x.vehicle||!x.route)){showToast('Select vehicle and route for transport students');return}if(x.transport!=='Yes'){x.vehicle='';x.route='';}const m=document.getElementById(id);if(m.dataset.edit!=null){sm.students[+m.dataset.edit]=x;delete m.dataset.edit}else sm.students.push(x);m.querySelector('.modal-head h3').textContent='Add Student';m.querySelector('.modal-foot .btn-primary').textContent='Save Student';renderStudents();renderTransport();}
+ else if(id==='staffModal'){if(!v[0]){showToast('Staff name is required');return}sm.staff.push({name:v[0],id:v[1]||'EMP-'+String(sm.staff.length+1).padStart(3,'0'),designation:v[2],phone:v[3],email:v[4],subject:v[5]});renderStaff();}
+ else if(id==='paymentModal'){const amt=Number(v[2]);if(!v[0]||!amt||amt<=0){showToast('Enter a valid payment amount');return}sm.payments.push({student:v[0],type:v[1],amount:amt,date:v[3]||new Date().toISOString().slice(0,10),method:v[4],ref:v[5]});renderPayments();}
+ else if(id==='noticeModal'){if(!v[0]||!v[3]){showToast('Notice title and message are required');return}sm.notices.push({title:v[0],audience:v[1],date:v[2],message:v[3]});renderNotices();}
+ else if(id==='classModal'){if(!v[1]){showToast('Division is required');return}sm.classes.push({grade:v[0],div:v[1],teacher:v[2],room:v[3]});}
+ else if(id==='examModal'){if(!v[0]){showToast('Exam name is required');return}sm.exams.push({name:v[0],start:v[1],end:v[2],classes:v[3],max:v[4]});}
+ else if(id==='homeworkModal'){if(!v[0]){showToast('Homework title is required');return}sm.homework.push({title:v[0],subject:v[1],className:v[2],due:v[3],description:v[4]});}
+ else if(id==='vehicleModal'){if(!v[0]||!v[1]){showToast('Vehicle name and registration are required');return}sm.vehicles.push({name:v[0],reg:v[1],driver:v[2],route:v[3],capacity:v[4],status:v[5]});renderTransport();}
+ else if(id==='bookModal'){if(!v[0]){showToast('Book title is required');return}sm.books.push({title:v[0],author:v[1],category:v[2],isbn:v[3],copies:v[4]});renderLibrary();}
+ smSave();closeModal(id);showToast(msg||'Saved successfully');
+}
+function markAttendance(){const rows=[...document.querySelectorAll('#attendanceTable tbody tr')];if(!rows.length)return;const date=document.querySelector('#view-attendance input[type=date]')?.value||new Date().toISOString().slice(0,10);sm.attendance[date]=rows.map(r=>({student:r.cells[0].innerText.trim(),status:r.querySelector('.att')?.value||'Present'}));smSave();showToast('Attendance saved for '+date);}
+function getRole(){return localStorage.getItem('schoolUserRole')||'school_admin'}
+function repairSchoolAdminBinding(user){
+  if(!user)return 'SCH-DEMO';
+  let schools=[]; try{schools=JSON.parse(localStorage.getItem('managedSchools')||'[]')||[];}catch(e){}
+  const id=String(user.schoolId||'').trim();
+  const name=String(user.schoolName||'').trim().toLowerCase();
+  const code=String(user.schoolCode||'').trim().toLowerCase();
+  let school=schools.find(s=>id && String(s.id)===id);
+  if(!school && name) school=schools.find(s=>String(s.name||'').trim().toLowerCase()===name);
+  if(!school && code) school=schools.find(s=>String(s.code||'').trim().toLowerCase()===code);
+  if(!school && schools.length===1) school=schools[0];
+  if(!school)return id||'SCH-DEMO';
+  const sid=String(school.id);
+  try{
+    user.schoolId=sid; user.schoolName=String(school.name||user.schoolName||'');
+    user.schoolCode=String(school.code||'');
+    const admins=JSON.parse(localStorage.getItem('schoolAdmins')||'[]')||[];
+    const ai=admins.findIndex(a=>String(a.email||'').toLowerCase()===String(user.email||'').toLowerCase());
+    if(ai>=0){admins[ai].schoolId=sid;admins[ai].schoolName=user.schoolName;admins[ai].schoolCode=user.schoolCode;localStorage.setItem('schoolAdmins',JSON.stringify(admins));}
+  }catch(e){}
+  return sid;
+}
+function setRoleUI(){
+  const role=getRole(), isSuper=role==='super_admin';
+  const nav=document.getElementById('schoolManagementNav'); if(nav){nav.classList.toggle('visible',isSuper);nav.style.display=''}
+  const view=document.getElementById('view-school-management'); if(view){view.classList.toggle('visible',isSuper); if(!isSuper){view.classList.remove('active')}}
+  const importPanel=document.getElementById('superAdminImportPanel'); if(importPanel){importPanel.classList.toggle('visible',isSuper);}
+  const name=localStorage.getItem('schoolUserName')|| (isSuper?'Super Admin':'School Admin');
+  const n=document.getElementById('currentUserName'), r=document.getElementById('currentUserRole'), b=document.getElementById('userTopBadge');
+  if(n)n.textContent=name; if(r)r.textContent=isSuper?'Super Admin':'School Admin'; if(b)b.textContent=isSuper?'SA':'AD'; const av=document.getElementById('currentUserAvatar'); if(av)av.textContent=isSuper?'SA':'AD'; const lb=document.getElementById('sidebarLogoutButton'); if(lb)lb.title='Logout '+(isSuper?'Super Admin':'School Admin');
+  if(isSuper){ populateSuperImportSchoolSelect(); const sid=getCurrentSchoolId(); if(sid) loadSchoolDataFor(sid); renderSchoolManagement(); }
+  else {
+    const sid=resolveSchoolIdForAdmin();
+    if(localStorage.getItem('schoolUserSchoolId')!==sid) localStorage.setItem('schoolUserSchoolId',sid);
+    if(typeof smLoad==='function'){
+      window.__loadedSchoolId=sid;
+      loadSchoolDataFor(sid);
+    }
+  }
+}
+function login(){
+  const emailEl=document.getElementById('loginEmail'), passEl=document.getElementById('loginPassword'), roleEl=document.getElementById('loginRole');
+  const email=(emailEl?.value||'').trim().toLowerCase(), pass=passEl?.value||'', role=roleEl?.value||'school_admin';
+  const selectedSchoolId=document.getElementById('loginSchool')?.value||'';
+  if(!email||!pass){showToast('Enter email and password');return false;}
+  let admins=[]; try{admins=JSON.parse(localStorage.getItem('schoolAdmins')||'[]');}catch(e){admins=[];}
+  // Demo Super Admin account — always available on this standalone HTML version.
+  if(role==='super_admin'){
+    if(email!=='superadmin@school.local' || pass!=='superadmin123'){
+      showToast('Use Super Admin: superadmin@school.local / superadmin123');return false;
+    }
+    localStorage.setItem('schoolLoggedIn','1');
+    localStorage.setItem('schoolUserRole','super_admin');
+    localStorage.setItem('schoolUserName','Super Admin');
+  }else{
+    // Default demo School Admin, plus any School Admin accounts created by Super Admin.
+    const demo={email:'admin@school.local',password:'admin123',name:'School Admin',status:'Active',role:'school_admin',schoolId:'SCH-DEMO',schoolName:'Sunrise English Medium School'};
+    const account=admins.find(a=>String(a.email||'').toLowerCase()===email);
+    const valid=(account && String(account.password||'')===pass && String(account.status||'Active')==='Active') ||
+      (!account && email===demo.email && pass===demo.password);
+    if(!valid){showToast('Invalid School Admin email or password');return false;}
+    if(account && selectedSchoolId && String(account.schoolId||'')!==String(selectedSchoolId)){showToast('Select the school assigned to this School Admin account');return false;}
+    const user=account||demo;
+    repairSchoolAdminBinding(user);
+    localStorage.setItem('schoolLoggedIn','1');
+    localStorage.setItem('schoolUserRole','school_admin');
+    localStorage.setItem('schoolUserName',user.name||'School Admin');
+    let canonicalSchoolId=String(user.schoolId||'').trim() || 'SCH-DEMO';
+    let canonicalSchoolName=String(user.schoolName||'');
+    let canonicalSchoolCode='';
+    try{
+      const schoolsForLogin=JSON.parse(localStorage.getItem('managedSchools')||'[]')||[];
+      const matchedSchool=schoolsForLogin.find(s=>String(s.id)===canonicalSchoolId ||
+        (canonicalSchoolName && String(s.name||'').trim().toLowerCase()===canonicalSchoolName.trim().toLowerCase()));
+      if(matchedSchool){
+        canonicalSchoolId=String(matchedSchool.id);
+        canonicalSchoolName=String(matchedSchool.name||canonicalSchoolName);
+        canonicalSchoolCode=String(matchedSchool.code||'');
+      }
+    }catch(e){}
+    localStorage.setItem('schoolUserSchoolId',canonicalSchoolId);
+    localStorage.setItem('schoolUserSchoolName',canonicalSchoolName);
+    localStorage.setItem('schoolUserSchoolCode',canonicalSchoolCode);
+    try{
+      const schoolsNow=JSON.parse(localStorage.getItem('managedSchools')||'[]');
+      const schoolNow=schoolsNow.find(s=>String(s.id)===canonicalSchoolId || (user.schoolName && String(s.name||'').trim().toLowerCase()===String(user.schoolName).trim().toLowerCase()));
+      if(schoolNow){
+        localStorage.setItem('schoolUserSchoolId',String(schoolNow.id));
+        localStorage.setItem('schoolUserSchoolName',String(schoolNow.name||''));
+        localStorage.setItem('schoolUserSchoolCode',String(schoolNow.code||''));
+      }
+    }catch(e){}
+  }
+  const loginScreen=document.getElementById('loginScreen'), app=document.getElementById('app');
+  if(loginScreen)loginScreen.classList.add('hide');
+  if(app)app.classList.remove('hide');
+  setRoleUI();
+  populateSuperImportSchoolSelect();
+  showToast(role==='super_admin'?'Welcome, Super Admin':'Welcome, School Admin');
+  return true;
+}
+function renderSchoolManagement(){
+  const schools=JSON.parse(localStorage.getItem('managedSchools')||'[]'), admins=JSON.parse(localStorage.getItem('schoolAdmins')||'[]');
+  const sc=document.getElementById('schoolCountPill'), ac=document.getElementById('adminCountPill'); if(sc)sc.textContent=schools.length+' school'+(schools.length===1?'':'s'); if(ac)ac.textContent=admins.length+' admin'+(admins.length===1?'':'s');
+  const sl=document.getElementById('schoolsList'), al=document.getElementById('schoolAdminsList');
+  if(sl) sl.innerHTML=schools.length?schools.map(x=>`<div class="admin-row"><div><strong>${esc(x.name)}</strong><small>${esc(x.code||'')} • ${esc(x.status||'Active')}</small></div></div>`).join(''):'<div style="color:#64748b;font-size:13px">No schools created yet.</div>' ;
+  if(al) al.innerHTML=admins.length?admins.map((x,i)=>`<div class="admin-row"><div><strong>${esc(x.name)}</strong><small>${esc(x.email)} • ${esc(x.schoolName)}</small></div><div class="admin-actions"><span class="role-pill">${esc(x.status||'Active')}</span><button class="btn btn-sm" onclick="toggleSchoolAdmin(${i})">${x.status==='Active'?'Deactivate':'Activate'}</button></div></div>`).join(''):'<div style="color:#64748b;font-size:13px">No School Admin accounts yet.</div>';
+}
+function openSchoolAdminModal(){if(getRole()!=='super_admin'){showToast('Super Admin access required');return}openModal('schoolAdminModal')}
+function saveSchoolAdmin(){
+  const schoolName=document.getElementById('saSchoolName').value.trim(), code=document.getElementById('saSchoolCode').value.trim(), name=document.getElementById('saAdminName').value.trim(), email=document.getElementById('saAdminEmail').value.trim().toLowerCase(), password=document.getElementById('saAdminPassword').value;
+  if(!schoolName||!name||!email||!password){showToast('Enter school and admin details');return}
+  const schools=JSON.parse(localStorage.getItem('managedSchools')||'[]'), admins=JSON.parse(localStorage.getItem('schoolAdmins')||'[]');
+  if(admins.some(a=>a.email===email)){showToast('Admin email already exists');return}
+  let school=schools.find(s=>s.name.toLowerCase()===schoolName.toLowerCase() || (code && s.code===code));
+  if(!school){school={id:'SCH-'+Date.now(),name:schoolName,code:code||'SCH-'+String(schools.length+1).padStart(3,'0'),status:'Active'};schools.push(school)}
+  admins.push({id:'ADM-'+Date.now(),name,email,password,schoolId:school.id,schoolName:school.name,status:'Active',role:'school_admin'});
+  localStorage.setItem('managedSchools',JSON.stringify(schools)); localStorage.setItem('schoolAdmins',JSON.stringify(admins));
+  closeModal('schoolAdminModal');
+  renderSchoolManagement();
+  // Immediately refresh the Super Admin import target list so a newly created
+  // school is available without reloading or logging in again.
+  populateSuperImportSchoolSelect();
+  document.getElementById('saSchoolName').value='';document.getElementById('saSchoolCode').value='';document.getElementById('saAdminName').value='';document.getElementById('saAdminEmail').value='';
+  showToast('School Admin created successfully');
+}
+function toggleSchoolAdmin(i){const admins=JSON.parse(localStorage.getItem('schoolAdmins')||'[]');if(!admins[i])return;admins[i].status=admins[i].status==='Active'?'Inactive':'Active';localStorage.setItem('schoolAdmins',JSON.stringify(admins));renderSchoolManagement();}
+function logout(){
+  try{
+    localStorage.removeItem('schoolLoggedIn');
+    localStorage.removeItem('schoolUserRole');
+    localStorage.removeItem('schoolUserName');
+    localStorage.removeItem('schoolUserSchoolId');
+    localStorage.removeItem('superAdminSelectedSchoolId');
+    localStorage.removeItem('schoolUserSchoolName');
+    localStorage.removeItem('schoolUserSchoolCode');
+  }catch(e){}
+  const loginScreen=document.getElementById('loginScreen');
+  const app=document.getElementById('app');
+  if(loginScreen)loginScreen.classList.remove('hide');
+  if(app)app.classList.add('hide');
+  const email=document.getElementById('loginEmail'), pass=document.getElementById('loginPassword');
+  if(email)email.value='';
+  if(pass)pass.value='';
+  try{ if(typeof showToast==='function') showToast('Logged out successfully'); }catch(e){}
+  setTimeout(()=>location.reload(),150);
+}
+function viewStudent(name){const x=sm.students.find(s=>s.name===name);if(!x){showToast('Student not found');return}alert('Student Profile\n\nName: '+x.name+'\nAdmission: '+x.adm+'\nClass: '+x.grade+'-'+x.div+'\nParent: '+x.parent+'\nPhone: '+x.phone+'\nStatus: '+x.status)}
+function bootInteractive(){if(localStorage.getItem('schoolLoggedIn')==='1'){document.getElementById('loginScreen').classList.add('hide');document.getElementById('app').classList.remove('hide');setRoleUI();populateSuperImportSchoolSelect();}normalizeImportedAppData();renderAllImportedTabs();renderStudents();renderStaff();renderPayments();renderNotices();renderTransport();renderLibrary();populateTransportFields();document.querySelectorAll('.modal-backdrop').forEach(m=>m.addEventListener('keydown',e=>{if(e.key==='Escape')m.classList.remove('show')}));}
+document.addEventListener('DOMContentLoaded',bootInteractive);
+
+
+function populateTransportFields(){const vm=document.getElementById('studentVehicle'),rm=document.getElementById('studentRoute');if(!vm||!rm)return;const oldV=vm.value,oldR=rm.value;vm.innerHTML='<option value="">Select vehicle</option>'+sm.vehicles.map(v=>`<option value="${esc(v.name)}">${esc(v.name)}${v.route?' • '+esc(v.route):''}</option>`).join('');const routes=[...new Set(sm.vehicles.map(v=>v.route).filter(Boolean))];rm.innerHTML='<option value="">Select route</option>'+routes.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');if(oldV)vm.value=oldV;if(oldR)rm.value=oldR;}
+document.addEventListener('DOMContentLoaded',function(){const tm=document.getElementById('studentTransport');if(tm)tm.addEventListener('change',function(){const show=this.value==='Yes';document.getElementById('studentVehicle').disabled=!show;document.getElementById('studentRoute').disabled=!show;});const vm=document.getElementById('studentVehicle');if(vm)vm.addEventListener('change',function(){const v=sm.vehicles.find(x=>x.name===this.value);if(v&&v.route)document.getElementById('studentRoute').value=v.route;});populateTransportFields();});
+
+
+function loadSchoolProfile(){
+  try{
+    const sid=getCurrentSchoolId();
+    const raw=localStorage.getItem('schoolProfile__'+sid)||localStorage.getItem('schoolProfile');
+    if(!raw)return;
+    const p=JSON.parse(raw);
+    if(document.getElementById('schoolName'))document.getElementById('schoolName').value=p.name||'';
+    if(document.getElementById('schoolCode'))document.getElementById('schoolCode').value=p.code||'';
+    if(document.getElementById('schoolPhone'))document.getElementById('schoolPhone').value=p.phone||'';
+    if(document.getElementById('schoolEmail'))document.getElementById('schoolEmail').value=p.email||'';
+    if(document.getElementById('schoolAddress'))document.getElementById('schoolAddress').value=p.address||'';
+  }catch(e){}
+}
+document.addEventListener('DOMContentLoaded',loadSchoolProfile);
+document.addEventListener('DOMContentLoaded',normalizeStudentRegistrationNumbers);
+
+
+function getSchoolProfile(){
+  const defaults={name:'${getSchoolProfile().name}',code:'GVPS-001',phone:'+91 98765 00000',email:'office@greenvalley.edu',address:'School Road, Kerala, India'};
+  try{
+    const sid=getCurrentSchoolId();
+    const p=JSON.parse(localStorage.getItem('schoolProfile__'+sid)||localStorage.getItem('schoolProfile')||'null');
+    return Object.assign(defaults,p||{});
+  }catch(e){return defaults;}
+}
+function schoolReportHeader(title){
+  const p=getSchoolProfile();
+  return `<div class="school-report-header" style="text-align:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid #dbe2ea">
+    <h2 style="margin:0 0 4px">${esc(p.name)}</h2>
+    <div style="font-size:12px;color:#64748b">Code: ${esc(p.code)}${p.phone?' &nbsp;|&nbsp; Phone: '+esc(p.phone):''}${p.email?' &nbsp;|&nbsp; '+esc(p.email):''}</div>
+    <div style="font-size:12px;color:#64748b">${esc(p.address)}</div>
+    <h3 style="margin:12px 0 0">${esc(title)}</h3>
+  </div>`;
+}
+
+
+function addSchoolProfileToOpenReport(){
+  try{
+    const p=getSchoolProfile();
+    const existing=document.querySelector('.school-report-header');
+    if(existing)return;
+    const candidates=document.querySelectorAll('.report-preview, .print-preview, .report-content, #reportContent, .modal-body');
+    for(const c of candidates){
+      if(c && /report|preview/i.test((c.id||'')+' '+(c.className||''))){
+        c.insertAdjacentHTML('afterbegin',schoolReportHeader('School Report'));
+        return;
+      }
+    }
+  }catch(e){}
+}
+
+
+function populateTransportAssignmentStudents(){
+  const s=document.getElementById('transportStudentSelect');
+  if(!s)return;
+  const current=s.value;
+  const students=sm.students.filter(x=>x.status!=='Inactive');
+  s.innerHTML='<option value="">Select student</option>'+students.map((x,i)=>`<option value="${i}">${esc(x.name)} — ${esc(x.adm)}</option>`).join('');
+  if(current!=='' && students[+current])s.value=current;
+}
+function populateTransportAssignmentVehicles(){
+  const v=document.getElementById('transportAssignVehicle');
+  const r=document.getElementById('transportAssignRoute');
+  if(!v||!r)return;
+  v.innerHTML='<option value="">Select vehicle</option>'+sm.vehicles.map(x=>`<option value="${esc(x.name)}">${esc(x.name)}</option>`).join('');
+  const routes=[...new Set(sm.vehicles.map(x=>x.route).filter(Boolean))];
+  r.innerHTML='<option value="">Select route</option>'+routes.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  syncTransportVehicleDetails();
+}
+function syncTransportStudentDetails(){
+  const s=document.getElementById('transportStudentSelect');
+  const a=document.getElementById('transportAdmissionDisplay');
+  const rg=document.getElementById('transportRegistrationDisplay');
+  const c=document.getElementById('transportClassDisplay');
+  if(!s)return;
+
+  const students=sm.students.filter(x=>x.status!=='Inactive');
+  const x=students[Number(s.value)];
+
+  if(a)a.value=x?(x.adm||x.admissionNo||x.admissionNumber||''):'';
+  if(rg)rg.value=x?getStudentRegistrationNumber(x):'';
+  if(c)c.value=x?((x.grade||'')+(x.div?'-'+x.div:'')):'';
+}
+function syncTransportRoute(){
+  const v=document.getElementById('transportAssignVehicle');
+  const r=document.getElementById('transportAssignRoute');
+  const x=sm.vehicles.find(y=>y.name===v.value);
+  syncTransportVehicleDetails();
+  if(x&&x.route)r.value=x.route;
+}
+function openTransportAssignmentModal(){
+  normalizeStudentRegistrationNumbers();
+  const modal=document.getElementById('transportAssignmentModal');
+  delete modal.dataset.editAdmission;
+  modal.querySelector('.modal-head h3').textContent='Assign Student to Transport';
+  modal.querySelector('.modal-foot .btn-primary').textContent='Save Assignment';
+  populateTransportAssignmentStudents();
+  populateTransportAssignmentVehicles();
+  document.getElementById('transportStudentSelect').value='';
+  document.getElementById('transportAdmissionDisplay').value='';
+  document.getElementById('transportRegistrationDisplay').value='';
+  document.getElementById('transportClassDisplay').value='';
+  document.getElementById('transportAssignVehicle').value='';
+  document.getElementById('transportVehicleRegistrationDisplay').value='';
+  document.getElementById('transportAssignRoute').value='';
+  syncTransportStudentDetails();
+  openModal('transportAssignmentModal');
+}
+function saveTransportAssignment(){
+  const studentSelect=document.getElementById('transportStudentSelect');
+  const vehicleSelect=document.getElementById('transportAssignVehicle');
+  const routeSelect=document.getElementById('transportAssignRoute');
+  const modal=document.getElementById('transportAssignmentModal');
+
+  if(!studentSelect||!vehicleSelect||!routeSelect||!modal){
+    showToast('Transport assignment form is unavailable');return;
+  }
+
+  if(studentSelect.value===''){showToast('Please select a student');return;}
+  if(!vehicleSelect.value){showToast('Please select a vehicle');return;}
+  if(!routeSelect.value){showToast('Please select a route');return;}
+
+  const students=sm.students.filter(x=>x.status!=='Inactive');
+  const selected=students[Number(studentSelect.value)];
+  if(!selected){showToast('Selected student was not found');return;}
+
+  const editAdmission=modal.dataset.editAdmission;
+  const realStudent=sm.students.find(x=>x.adm===(editAdmission||selected.adm));
+  if(!realStudent){showToast('Student record was not found');return;}
+
+  // If editing and the student selector was changed, the assignment follows
+  // the newly selected student. Otherwise update the original student.
+  if(editAdmission && selected.adm!==editAdmission){
+    const oldStudent=sm.students.find(x=>x.adm===editAdmission);
+    if(oldStudent){oldStudent.transport='No';oldStudent.vehicle='';oldStudent.route='';}
+    realStudent.transport='Yes';
+    realStudent.vehicle=vehicleSelect.value;
+    realStudent.route=routeSelect.value;
+  }else{
+    realStudent.transport='Yes';
+    realStudent.vehicle=vehicleSelect.value;
+    realStudent.route=routeSelect.value;
+  }
+
+  try{
+    localStorage.setItem('schoolManagementData',JSON.stringify(sm));
+  }catch(e){
+    showToast('Could not save assignment');return;
+  }
+
+  delete modal.dataset.editAdmission;
+  modal.querySelector('.modal-head h3').textContent='Assign Student to Transport';
+  modal.querySelector('.modal-foot .btn-primary').textContent='Save Assignment';
+
+  renderStudents();
+  renderTransport();
+  renderTransportAssignments();
+  updateTransportStats();
+  closeModal('transportAssignmentModal');
+  showToast('Transport assignment updated successfully');
+}
+
+
+(function(){
+  const originalCloseModal=window.closeModal;
+  window.closeModal=function(id){
+    if(id==='transportAssignmentModal'){
+      const m=document.getElementById(id);
+      if(m){
+        delete m.dataset.editAdmission;
+        const h=m.querySelector('.modal-head h3');
+        const b=m.querySelector('.modal-foot .btn-primary');
+        if(h)h.textContent='Assign Student to Transport';
+        if(b)b.textContent='Save Assignment';
+      }
+    }
+    return originalCloseModal.apply(this,arguments);
+  };
+})();
+
+
+function getStudentRegistrationNumber(student){
+  if(!student)return '';
+  const keys=['registrationNo','registrationNumber','regNo','registration','regNumber','reg'];
+  for(const k of keys){
+    if(student[k]!==undefined && student[k]!==null && String(student[k]).trim()!=='')
+      return String(student[k]).trim();
+  }
+  return '';
+}
+
+
+function normalizeStudentRegistrationNumbers(){
+  if(!sm||!Array.isArray(sm.students))return;
+  sm.students.forEach(s=>{
+    if(!s)return;
+    const value=getStudentRegistrationNumber(s);
+    if(value && !s.registrationNo)s.registrationNo=value;
+  });
+}
+
+
+function getVehicleRegistrationNumber(vehicle){
+  if(!vehicle)return '';
+  const keys=['registrationNo','registrationNumber','regNo','regNumber','vehicleRegistrationNo','vehicleRegistrationNumber','number','reg'];
+  for(const k of keys){
+    if(vehicle[k]!==undefined && vehicle[k]!==null && String(vehicle[k]).trim()!=='')
+      return String(vehicle[k]).trim();
+  }
+  return '';
+}
+function syncTransportVehicleDetails(){
+  const v=document.getElementById('transportAssignVehicle');
+  const r=document.getElementById('transportVehicleRegistrationDisplay');
+  if(!v||!r)return;
+  const vehicle=sm.vehicles.find(x=>String(x.name)===String(v.value));
+  r.value=getVehicleRegistrationNumber(vehicle);
+}
+
+
+let pendingSchoolImport=null;
+
+const SCHOOL_IMPORT_HEADERS={
+  'School Profile':['name','code','phone','email','address'],
+  'Academic Years':['name','startDate','endDate','active'],
+  'Classes':['name'],
+  'Divisions':['name','class'],
+  'Subjects':['name','code'],
+  'Students':['registrationNo','adm','name','dob','gender','grade','academicGrade','div','phone','address','admissionDate','status','transport','vehicle','route'],
+  'Parents':['name','phone','email','address'],
+  'Staff':['employeeId','name','designation','phone','email','address','status'],
+  'Teachers':['employeeId','name','designation','phone','email','address','status'],
+  'Vehicles':['name','registrationNo','route','driver','capacity','status'],
+  'Routes':['name','description'],
+  'Stops':['name','route','time'],
+  'Transport Assignments':['studentAdmissionNo','vehicle','route'],
+  'Fee Categories':['name','amount','frequency'],
+  'Student Fees':['studentAdmissionNo','category','amount','dueDate','status'],
+  'Fee Payments':['studentAdmissionNo','category','amount','date','receiptNo','method'],
+  'Attendance':['studentAdmissionNo','date','status'],
+  'Exams':['name','date','class','subject'],
+  'Exam Marks':['studentAdmissionNo','exam','subject','marks','grade','percentage','rank'],
+  'Homework':['title','class','subject','dueDate','description','status'],
+  'Notices':['title','message','date','audience','status'],
+  'Library Books':['title','author','category','isbn','quantity','available'],
+  'Library Transactions':['studentAdmissionNo','book','issueDate','returnDate','fine','status']
+};
+
+function downloadSchoolImportTemplate(){
+  if(getRole()!=='super_admin'){showToast('Super Admin access required');return;}
+  if(typeof XLSX==='undefined'){showToast('Excel support is still loading');return;}
+  const wb=XLSX.utils.book_new();
+  Object.entries(SCHOOL_IMPORT_HEADERS).forEach(([sheet,headers])=>{
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([headers]),sheet.substring(0,31));
+  });
+  XLSX.writeFile(wb,'School_Management_Import_Template.xlsx');
+  showToast('Excel template downloaded');
+}
+function normalizeImportKey(v){return String(v??'').trim().toLowerCase().replace(/[\s_\-\/]+/g,'');}
+function parseImportWorkbook(wb){
+  const data={};
+  wb.SheetNames.forEach(sn=>{
+    const logical=Object.keys(SCHOOL_IMPORT_HEADERS).find(s=>s===sn||s.substring(0,31)===sn);
+    if(!logical)return;
+    const raw=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:''});
+    if(!raw.length)return;
+    const expected=SCHOOL_IMPORT_HEADERS[logical], header=raw[0].map(normalizeImportKey);
+    data[logical]=raw.slice(1).filter(r=>r.some(v=>String(v??'').trim()!=='')).map(r=>{
+      const o={};
+      expected.forEach((k,i)=>{const j=header.indexOf(normalizeImportKey(k));o[k]=j>=0?(r[j]??''):(r[i]??'');});
+      return o;
+    });
+  });
+  return data;
+}
+function validateSchoolImport(data){
+  const errors=[],seen=new Set();
+  (data['Students']||[]).forEach((s,i)=>{
+    if(!String(s.name||'').trim())errors.push(`Students row ${i+2}: Student name is required`);
+    if(!String(s.adm||'').trim())errors.push(`Students row ${i+2}: Admission number is required`);
+    const a=String(s.adm||'').trim();
+    if(a&&seen.has(a))errors.push(`Students row ${i+2}: Duplicate admission number ${a}`);
+    if(a)seen.add(a);
+  });
+  (data['Vehicles']||[]).forEach((v,i)=>{
+    if(!String(v.name||'').trim())errors.push(`Vehicles row ${i+2}: Vehicle name is required`);
+  });
+  return {errors};
+}
+
+function populateSuperImportSchoolSelect(){
+  const wrap=document.getElementById('superImportTargetWrap'), sel=document.getElementById('superImportSchoolSelect');
+  if(!wrap||!sel)return;
+  const isSuper=getRole()==='super_admin';
+  wrap.classList.toggle('visible',isSuper);
+  if(!isSuper)return;
+  let schools=[]; try{schools=JSON.parse(localStorage.getItem('managedSchools')||'[]')||[];}catch(e){schools=[];}
+  const previous=String(localStorage.getItem('superAdminSelectedSchoolId')||'').trim();
+  const chosen=schools.some(x=>String(x.id)===previous) ? previous : (schools[0] ? String(schools[0].id) : '');
+  sel.innerHTML=schools.length ? schools.map(x=>`<option value="${esc(x.id)}">${esc(x.name)}${x.code?' — '+esc(x.code):''}</option>`).join('') : '<option value="">No schools created</option>';
+  if(chosen){
+    sel.value=chosen;
+    localStorage.setItem('superAdminSelectedSchoolId',chosen);
+    sel.onchange=()=>switchSuperAdminSchool(sel.value);
+  }
+}
+function switchSuperAdminSchool(schoolId){
+  if(getRole()!=='super_admin')return;
+  const sid=String(schoolId||'').trim();
+  if(!sid){showToast('Select a school');return;}
+  try{localStorage.setItem('superAdminSelectedSchoolId',sid);}catch(e){}
+  loadSchoolDataFor(sid);
+  if(typeof renderSchoolManagement==='function')renderSchoolManagement();
+  if(typeof populateSuperImportSchoolSelect==='function'){
+    const sel=document.getElementById('superImportSchoolSelect');
+    if(sel)sel.value=sid;
+    sel&&(sel.onchange=()=>switchSuperAdminSchool(sel.value));
+  }
+  const name=getSchoolNameById(sid)||sid;
+  showToast('Viewing data for '+name);
+}
+window.addEventListener('storage',function(e){
+  if(e.key==='managedSchools'){
+    try{
+      if(typeof renderSchoolManagement==='function' && getRole()==='super_admin') renderSchoolManagement();
+      populateSuperImportSchoolSelect();
+    }catch(err){}
+  }
+});
+window.addEventListener('storage',function(e){
+  if(String(e.key||'').startsWith('schoolDataVersion__')){
+    try{
+      const sid=String(e.key).replace('schoolDataVersion__','');
+      if(getRole()==='school_admin' && sid===String(resolveSchoolIdForAdmin())){
+        loadSchoolDataFor(sid);
+        showToast('School data updated');
+      }
+    }catch(err){console.error(err);}
+  }
+});
+
+function getImportTargetSchoolId(){
+  if(getRole()==='super_admin'){
+    return document.getElementById('superImportSchoolSelect')?.value||'';
+  }
+  return localStorage.getItem('schoolUserSchoolId')||'SCH-DEMO';
+}
+function getSchoolNameById(id){
+  try{const schools=JSON.parse(localStorage.getItem('managedSchools')||'[]');const x=schools.find(s=>String(s.id)===String(id));return x?.name||'';}catch(e){return '';}
+}
+function previewSchoolImport(event){
+  if(getRole()!=='super_admin'){showToast('Only Super Admin can import school data'); if(event?.target) event.target.value=''; return;}
+  const file=event.target.files?.[0]; if(!file)return;
+  const targetSchoolId=getImportTargetSchoolId();
+  if(!targetSchoolId){showToast('Super Admin: select a school before importing');event.target.value='';return;}
+  pendingSchoolImport={targetSchoolId};
+  if(typeof XLSX==='undefined'){showToast('Excel support is still loading');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
+      const data=parseImportWorkbook(wb),check=validateSchoolImport(data);
+      pendingSchoolImport={...(pendingSchoolImport||{}),data,check};
+      let total=0;
+      const rows=Object.entries(data).map(([s,r])=>{total+=r.length;return `<tr><td>${esc(s)}</td><td>${r.length}</td><td>${check.errors.some(x=>x.startsWith(s+' '))?'Issues found':'Ready'}</td></tr>`;}).join('');
+      const errs=check.errors.slice(0,30).map(x=>`<li>${esc(x)}</li>`).join('');
+      document.getElementById('schoolImportPreview').innerHTML=`<p><strong>${esc(file.name)}</strong> — ${total} records detected.</p>
+        <div class="table-wrap"><table><thead><tr><th>Sheet</th><th>Records</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>
+        ${check.errors.length?`<div style="margin-top:12px"><strong>Errors</strong><ul>${errs}</ul></div>`:'<p style="margin-top:12px">Validation passed. You can confirm the import.</p>'}`;
+      document.getElementById('confirmSchoolImportBtn').disabled=check.errors.length>0;
+      openModal('schoolImportModal');
+    }catch(err){console.error(err);showToast('Could not read the Excel file');}
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function normalizeImportedStudent(r){
+  return {name:String(r.name||'').trim(),adm:String(r.adm||r.admissionNo||r.admissionNumber||'').trim(),
+  registrationNo:String(r.registrationNo||r.registrationNumber||r.regNo||'').trim(),dob:String(r.dob||'').trim(),
+  gender:String(r.gender||'').trim(),grade:normalizeSchoolClass(r.grade||r.class||r.className||''),academicGrade:String(r.academicGrade||r['Academic Grade']||r['academic grade']||r.resultGrade||r.result_grade||'').trim(),div:String(r.div||r.division||'').trim(),
+  phone:String(r.phone||r.mobile||'').trim(),address:String(r.address||'').trim(),
+  admissionDate:String(r.admissionDate||'').trim(),status:String(r.status||'Active').trim(),
+  transport:String(r.transport||'No').trim(),vehicle:String(r.vehicle||'').trim(),route:String(r.route||'').trim()};
+}
+function normalizeImportedVehicle(r){
+  return {name:String(r.name||r.vehicle||'').trim(),
+  registrationNo:String(r.registrationNo||r.registrationNumber||r.regNo||r.vehicleRegistrationNo||'').trim(),
+  route:String(r.route||'').trim(),driver:String(r.driver||'').trim(),capacity:String(r.capacity||'').trim(),
+  status:String(r.status||'Active').trim()};
+}
+function normalizeImportedStaff(r){
+  return {employeeId:String(r.employeeId||r.empId||'').trim(),name:String(r.name||'').trim(),
+  designation:String(r.designation||'').trim(),phone:String(r.phone||r.mobile||'').trim(),
+  email:String(r.email||'').trim(),address:String(r.address||'').trim(),status:String(r.status||'Active').trim()};
+}
+function normalizeImportedGeneric(r){
+  const o={};Object.keys(r).forEach(k=>{if(String(r[k]??'').trim()!=='')o[k]=r[k];});return o;
+}
+function sameImportedRecord(a,b,keys){
+  const vals=keys.map(k=>({
+    a:String(a?.[k]??'').trim().toLowerCase(),
+    b:String(b?.[k]??'').trim().toLowerCase()
+  })).filter(x=>x.b!=='');
+  if(!vals.length)return false;
+  // Composite keys (fees, attendance, marks, etc.) must match ALL populated fields.
+  // Identity alternatives (employee ID/name, admission/registration) can match when
+  // any populated identifier agrees and the remaining identifier is blank in old data.
+  if((keys.includes('adm')&&keys.includes('registrationNo')) ||
+     (keys.includes('employeeId')&&keys.includes('name')) ||
+     (keys.includes('name')&&keys.includes('phone'))){
+    return vals.some(x=>x.a!=='' && x.a===x.b);
+  }
+  return vals.every(x=>x.a!=='' && x.a===x.b);
+}
+function mergeImportedRecords(target,rows,keys,normalizer){
+  if(!Array.isArray(rows)||!rows.length)return 0;
+  if(!Array.isArray(sm[target]))sm[target]=[];
+  let processed=0;
+  rows.forEach(row=>{
+    const clean=normalizer?normalizer(row):normalizeImportedGeneric(row);
+    if(!Object.keys(clean).some(k=>String(clean[k]??'').trim()!==''))return;
+    const old=sm[target].find(x=>sameImportedRecord(x,clean,keys));
+    if(old)Object.assign(old,clean);
+    else sm[target].push(clean);
+    processed++;
+  });
+  return processed;
+}
+function findStudentByAdmission(adm){
+  const a=String(adm??'').trim();
+  return sm.students.find(s=>String(s.adm??s.admissionNo??s.admissionNumber??'').trim()===a);
+}
+function importTransportAssignments(rows){
+  if(!Array.isArray(rows))return;
+  if(!Array.isArray(sm.transportAssignments))sm.transportAssignments=[];
+  rows.forEach(a=>{
+    const adm=String(a.studentAdmissionNo||a.adm||a.admissionNo||'').trim();
+    const vehicle=String(a.vehicle||'').trim(),route=String(a.route||'').trim();
+    const s=findStudentByAdmission(adm);
+    if(s){s.transport='Yes';s.vehicle=vehicle;s.route=route;}
+    const old=sm.transportAssignments.find(x=>String(x.studentAdmissionNo||x.adm||'')===adm);
+    if(old)Object.assign(old,{studentAdmissionNo:adm,vehicle,route});
+    else if(adm)sm.transportAssignments.push({studentAdmissionNo:adm,vehicle,route});
+  });
+}
+function refreshAllSchoolDataViews(){
+  ['renderStudents','renderTransport','renderTransportAssignments','updateTransportStats','renderFees','renderImportedAttendance','renderExams','renderHomework','renderNotices','renderLibrary']
+  .forEach(n=>{try{if(typeof window[n]==='function')window[n]();}catch(e){}});
+}
+function confirmSchoolImport(){
+  if(getRole()!=='super_admin'){showToast('Only Super Admin can confirm imports');return;}
+  if(!pendingSchoolImport||pendingSchoolImport.check.errors.length){showToast('Resolve import errors first');return;}
+
+  const selectedSchoolId=String(
+    pendingSchoolImport.targetSchoolId||getImportTargetSchoolId()||''
+  ).trim();
+
+  if(!selectedSchoolId){
+    showToast('Select a school for this import');
+    return;
+  }
+
+  const d=pendingSchoolImport.data;
+  const previousSm=sm;
+
+  try{
+    /*
+      IMPORTANT:
+      Imported data belongs ONLY to the school selected by Super Admin.
+      Each school has an independent storage snapshot keyed by school ID.
+      Super Admin can switch schools to manage their separate records.
+      School Admin is locked to their assigned school by the session logic.
+    */
+    sm=smLoad(selectedSchoolId);
+
+    const importers=[
+      ['academicYears','Academic Years',['name']],
+      ['classes','Classes',['name']],
+      ['divisions','Divisions',['name','class']],
+      ['subjects','Subjects',['name','code']],
+      ['students','Students',['adm','registrationNo'],normalizeImportedStudent],
+      ['parents','Parents',['name','phone']],
+      ['staff','Staff',['employeeId','name'],normalizeImportedStaff],
+      ['teachers','Teachers',['employeeId','name'],normalizeImportedStaff],
+      ['vehicles','Vehicles',['name','registrationNo'],normalizeImportedVehicle],
+      ['routes','Routes',['name']],
+      ['stops','Stops',['name','route']],
+      ['feeCategories','Fee Categories',['name']],
+      ['studentFees','Student Fees',['studentAdmissionNo','category','dueDate']],
+      ['feePayments','Fee Payments',['studentAdmissionNo','category','date','amount','receiptNo']],
+      ['attendance','Attendance',['studentAdmissionNo','date']],
+      ['exams','Exams',['name','date']],
+      ['examMarks','Exam Marks',['studentAdmissionNo','exam','subject']],
+      ['homework','Homework',['title','class','subject','dueDate']],
+      ['notices','Notices',['title','date']],
+      ['libraryBooks','Library Books',['title','isbn']],
+      ['libraryTransactions','Library Transactions',['studentAdmissionNo','book','issueDate']]
+    ];
+
+    let imported=0;
+    importers.forEach(item=>{
+      const key=item[0], sheet=item[1], unique=item[2], normalizer=item[3];
+      imported += mergeImportedRecords(key,d[sheet]||[],unique,normalizer);
+    });
+
+    importTransportAssignments(d['Transport Assignments']||[]);
+    normalizeImportedAppData();
+
+    /* Persist ONLY to the selected school's storage key. */
+    smSave(selectedSchoolId);
+
+    /* Verify persistence for the selected school. */
+    const verify=smLoad(selectedSchoolId);
+    const importedStudents=(d['Students']||[]).filter(r=>String(r.name||r.adm||'').trim()!=='').length;
+    if(importedStudents>0 && (!Array.isArray(verify.students)||verify.students.length<importedStudents)){
+      throw new Error('Imported student records were not persisted for the selected school');
+    }
+
+    /* Refresh only the current Super Admin school view. */
+    sm=verify;
+    renderAllImportedTabs();
+    refreshAllSchoolDataViews();
+
+    pendingSchoolImport=null;
+    closeModal('schoolImportModal');
+    const input=document.getElementById('schoolImportFile');
+    if(input)input.value='';
+
+    if(typeof renderSchoolManagement==='function')renderSchoolManagement();
+    if(typeof populateSuperImportSchoolSelect==='function')populateSuperImportSchoolSelect();
+
+    const school=JSON.parse(localStorage.getItem('managedSchools')||'[]')
+      .find(s=>String(s.id)===selectedSchoolId);
+    const schoolName=school?.name||selectedSchoolId;
+
+    showToast(`Import completed for ${schoolName}: ${imported} records imported/updated`);
+  }catch(e){
+    console.error(e);
+    sm=previousSm;
+    showToast('Import failed while saving data to the selected school');
+  }
+}
+
+
+/* ---------- School-scoped data guard ---------- */
+function getCurrentSchoolScopeId(){
+  try{
+    const role=getRole();
+    const session=JSON.parse(localStorage.getItem('schoolManagementSession')||'null');
+    if(role==='school_admin'){
+      return String(
+        session?.schoolId ||
+        session?.school?.id ||
+        localStorage.getItem('currentSchoolId') ||
+        ''
+      ).trim();
+    }
+    if(role==='super_admin'){
+      return String(
+        localStorage.getItem('superAdminSelectedSchoolId') ||
+        getImportTargetSchoolId() ||
+        ''
+      ).trim();
+    }
+  }catch(e){}
+  return '';
+}
+
+/* School Admin must never fall back to another school's snapshot. */
+function loadSchoolScopedData(){
+  const id=getCurrentSchoolScopeId();
+  if(!id)return sm;
+  sm=smLoad(id);
+  return sm;
+}
+
+/* ---------- Excel import -> all app tabs compatibility layer ---------- */
+function normalizeImportedAppData(){
+  if(!Array.isArray(sm.students))sm.students=[];
+  sm.students=sm.students.map(s=>normalizeImportedStudent(s));
+
+  if(!Array.isArray(sm.staff))sm.staff=[];
+  sm.staff=sm.staff.map(s=>Object.assign({},
+    s,{id:String(s.id||s.employeeId||s.empId||''),employeeId:String(s.employeeId||s.id||''),
+    subject:String(s.subject||s.subjects||'')}));
+
+  if(!Array.isArray(sm.vehicles))sm.vehicles=[];
+  sm.vehicles=sm.vehicles.map(v=>Object.assign({},v,{
+    reg:String(v.reg||v.registrationNo||v.registrationNumber||v.regNo||''),
+    registrationNo:String(v.registrationNo||v.registrationNumber||v.regNo||v.reg||'')
+  }));
+
+  if(!Array.isArray(sm.payments))sm.payments=[];
+  if(Array.isArray(sm.feePayments)){
+    sm.feePayments.forEach(p=>{
+      const adm=String(p.studentAdmissionNo||'').trim();
+      const st=findStudentByAdmission(adm);
+      const item={student:st?.name||adm,type:p.category||p.type||'Fee',
+        amount:Number(p.amount||0),date:String(p.date||''),method:String(p.method||''),
+        ref:String(p.receiptNo||p.ref||'')};
+      const exists=sm.payments.some(x=>String(x.ref||'')===item.ref && item.ref!=='');
+      if(!exists)sm.payments.push(item);
+    });
+  }
+
+  if(!Array.isArray(sm.books))sm.books=[];
+  if(Array.isArray(sm.libraryBooks)){
+    sm.libraryBooks.forEach(b=>{
+      const item={title:String(b.title||''),author:String(b.author||''),category:String(b.category||''),
+        isbn:String(b.isbn||''),copies:Number(b.quantity??b.copies??0)};
+      const old=sm.books.find(x=>String(x.isbn||'')===item.isbn && item.isbn!=='');
+      if(old)Object.assign(old,item); else if(item.title)sm.books.push(item);
+    });
+  }
+
+  if(!Array.isArray(sm.exams))sm.exams=[];
+  if(Array.isArray(sm.examMarks) && sm.examMarks.length){
+    sm.examMarks.forEach(m=>{
+      if(!sm.exams.some(e=>String(e.name||'')===String(m.exam||'')))
+        sm.exams.push({name:String(m.exam||''),start:'',end:'',classes:String(findStudentByAdmission(m.studentAdmissionNo)?.grade||''),max:100});
+    });
+  }
+
+  if(!Array.isArray(sm.homework))sm.homework=[];
+  if(!Array.isArray(sm.notices))sm.notices=[];
+  if(!Array.isArray(sm.routes))sm.routes=[];
+  if(!Array.isArray(sm.classes))sm.classes=[];
+  if(!Array.isArray(sm.subjects))sm.subjects=[];
+  if(!Array.isArray(sm.academicYears))sm.academicYears=[];
+  if(!Array.isArray(sm.attendance))sm.attendance=[];
+  if(sm.attendance && !Array.isArray(sm.attendance) && typeof sm.attendance==='object'){
+    const a=[];
+    Object.entries(sm.attendance).forEach(([adm,days])=>{
+      if(days&&typeof days==='object')Object.entries(days).forEach(([date,status])=>a.push({studentAdmissionNo:adm,date,status}));
+    });
+    sm.attendance=a;
+  }
+}
+function getImportedAttendanceClasses(){
+  const students=Array.isArray(sm.students)?sm.students:[];
+  const vals=[...new Set(students.map(s=>{
+    const grade=String(s.grade||s.class||'').trim();
+    const div=String(s.div||s.division||'').trim();
+    return grade ? (div ? grade+'-'+div : grade) : '';
+  }).filter(Boolean))];
+  const order={'LKG':0,'UKG':1,'1st Std':2,'2nd Std':3,'3rd Std':4,'4th Std':5};
+  return vals.sort((a,b)=>{
+    const ga=a.split('-')[0],gb=b.split('-')[0];
+    return (order[ga]??99)-(order[gb]??99) || a.localeCompare(b);
+  });
+}
+function renderImportedAttendance(){
+  const tb=document.querySelector('#attendanceTable tbody'); if(!tb)return;
+  const students=Array.isArray(sm.students)?sm.students:[];
+  const filter=document.getElementById('attendanceClassFilter');
+  const search=(document.getElementById('attendanceSearch')?.value||'').trim().toLowerCase();
+  const date=document.querySelector('#view-attendance input[type=date]')?.value||'';
+
+  const classes=getImportedAttendanceClasses();
+  if(filter){
+    const current=filter.value;
+    filter.innerHTML='<option value="">All Classes</option>'+classes.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    if(classes.includes(current))filter.value=current;
+  }
+  const selected=filter?.value||'';
+
+  const records=Array.isArray(sm.attendance)?sm.attendance:[];
+  const byStudent={};
+  records.filter(a=>String(a.date||'')===String(date||'')).forEach(a=>{
+    const adm=String(a.studentAdmissionNo||a.adm||a.admissionNo||'');
+    byStudent[adm]=a;
+  });
+
+  const rows=students.filter(s=>{
+    const grade=String(s.grade||s.class||'').trim();
+    const div=String(s.div||s.division||'').trim();
+    const label=grade?(div?grade+'-'+div:grade):'';
+    const hay=[s.name,s.adm,s.registrationNo,grade,div,s.phone].join(' ').toLowerCase();
+    return (!selected || label===selected) && (!search || hay.includes(search));
+  });
+
+  tb.innerHTML=rows.map(s=>{
+    const adm=String(s.adm||s.admissionNo||'');
+    const a=byStudent[adm];
+    const st=a?.status||'Present';
+    return `<tr>
+      <td><div class="student-cell"><div class="avatar-sm">${initials(s.name)}</div><strong>${esc(s.name||'')}</strong></div></td>
+      <td>${esc(adm)}</td>
+      <td><select class="att">
+        <option ${st==='Present'?'selected':''}>Present</option>
+        <option ${st==='Absent'?'selected':''}>Absent</option>
+        <option ${st==='Leave'?'selected':''}>Leave</option>
+      </select></td>
+      <td>${(() => {
+        const month=String(date||'').slice(0,7);
+        if(!month)return '—';
+        const mine=records.filter(x=>String(x.studentAdmissionNo||x.adm||'')===adm && String(x.date||'').slice(0,7)===month);
+        if(!mine.length)return '—';
+        const p=mine.filter(x=>String(x.status||'')==='Present').length;
+        return Math.round(p/mine.length*100)+'%';
+      })()}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="4"><div class="empty">No students found for the selected imported class.</div></td></tr>';
+
+  updateAttendanceSummary();
+}
+function renderImportedAcademics(){
+  const view=document.getElementById('view-academics'); if(!view)return;
+  const cards=view.querySelectorAll('.grid.three .card');
+  if(cards[0]){
+    const active=sm.academicYears.find(x=>String(x.active).toLowerCase()==='yes')||sm.academicYears[0];
+    const strong=cards[0].querySelector('strong'); if(strong)strong.textContent=active?.name||'—';
+  }
+  if(cards[1]){
+    const strong=cards[1].querySelector('strong'); if(strong)strong.textContent=sm.classes.length||0;
+    const p=cards[1].querySelector('p'); if(p)p.textContent=sm.classes.length?sm.classes.map(x=>x.name||x.grade).join(', '):'No classes imported';
+  }
+  if(cards[2]){
+    const strong=cards[2].querySelector('strong'); if(strong)strong.textContent=sm.subjects.length||0;
+    const p=cards[2].querySelector('p'); if(p)p.textContent=sm.subjects.length?sm.subjects.map(x=>x.name).join(', '):'No subjects imported';
+  }
+  let box=view.querySelector('#importedClassesTable');
+  if(!box){
+    box=document.createElement('div');box.id='importedClassesTable';box.className='card';box.style.marginTop='16px';
+    view.appendChild(box);
+  }
+  box.innerHTML=`<div class="card-head"><h3>Imported Classes & Divisions</h3></div>
+  <div class="table-wrap"><table><thead><tr><th>Class</th><th>Division</th></tr></thead><tbody>${
+    (sm.divisions||[]).map(d=>`<tr><td>${esc(d.class||d.grade||'')}</td><td>${esc(d.name||d.div||'')}</td></tr>`).join('') ||
+    sm.classes.map(c=>`<tr><td>${esc(c.name||c.grade||'')}</td><td>—</td></tr>`).join('') ||
+    '<tr><td colspan="2"><div class="empty">No imported classes</div></td></tr>'
+  }</tbody></table></div>`;
+}
+function renderImportedExams(){
+  const view=document.getElementById('view-exams');if(!view)return;
+  let box=view.querySelector('#importedExamData');if(!box){
+    box=document.createElement('div');box.id='importedExamData';box.className='card';box.style.marginTop='16px';
+    view.appendChild(box);
+  }
+  box.innerHTML=`<div class="card-head"><h3>Imported Exams & Results</h3></div><div class="table-wrap"><table>
+  <thead><tr><th>Exam</th><th>Date</th><th>Class</th><th>Subject</th><th>Student</th><th>Marks</th><th>Grade</th></tr></thead><tbody>${
+    (sm.examMarks||[]).map(m=>{const s=findStudentByAdmission(m.studentAdmissionNo);return `<tr><td>${esc(m.exam)}</td><td>${esc(m.date||'—')}</td><td>${esc(s?.grade||'—')}</td><td>${esc(m.subject)}</td><td>${esc(s?.name||m.studentAdmissionNo)}</td><td>${esc(m.marks)}</td><td>${esc(m.grade||'—')}</td></tr>`}).join('') ||
+    (sm.exams||[]).map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.date||e.start||'—')}</td><td>${esc(e.class||e.classes||'—')}</td><td>${esc(e.subject||'—')}</td><td>—</td><td>—</td><td>—</td></tr>`).join('') ||
+    '<tr><td colspan="7"><div class="empty">No imported exam data</div></td></tr>'
+  }</tbody></table></div>`;
+}
+function renderImportedHomework(){
+  const view=document.getElementById('view-homework');if(!view)return;
+  let box=view.querySelector('#importedHomeworkData');if(!box){
+    box=document.createElement('div');box.id='importedHomeworkData';box.className='card';box.style.marginTop='16px';
+    view.appendChild(box);
+  }
+  box.innerHTML=`<div class="card-head"><h3>Imported Homework & Assignments</h3></div><div class="table-wrap"><table>
+  <thead><tr><th>Title</th><th>Class</th><th>Subject</th><th>Due Date</th><th>Description</th><th>Status</th></tr></thead><tbody>${
+    (sm.homework||[]).map(h=>`<tr><td>${esc(h.title)}</td><td>${esc(h.className||h.class||'')}</td><td>${esc(h.subject)}</td><td>${esc(h.due||h.dueDate||'')}</td><td>${esc(h.description||'')}</td><td>${esc(h.status||'Assigned')}</td></tr>`).join('') ||
+    '<tr><td colspan="6"><div class="empty">No imported homework</div></td></tr>'
+  }</tbody></table></div>`;
+}
+function renderImportedFeeData(){
+  const tb=document.querySelector('#feeTable tbody');if(!tb)return;
+  const tools=document.querySelector('#view-fees .table-tools');
+  const selects=tools?.querySelectorAll('select')||[];
+  const typeFilter=selects[0],statusFilter=selects[1];
+  const search=(tools?.querySelector('input')?.value||'').trim().toLowerCase();
+  const selectedType=String(typeFilter?.value||'All Fee Types').trim().toLowerCase();
+  const selectedStatus=String(statusFilter?.value||'All Status').trim().toLowerCase();
+
+  const normalizeCat=s=>String(s??'').trim().toLowerCase()
+    .replace(/transportation|bus fee|transport fee/g,'transport')
+    .replace(/tuition fee|school fees?|school fee/g,'school fee')
+    .replace(/activity fee|activities/g,'activities');
+  const normStatus=s=>String(s??'').trim().toLowerCase().replace(/\s+/g,' ');
+  const num=v=>{const n=Number(String(v??'').replace(/[^0-9.-]/g,''));return Number.isFinite(n)?n:0;};
+
+  const paymentRows=Array.isArray(sm.feePayments)?sm.feePayments:[];
+  let feeRows=Array.isArray(sm.studentFees)?sm.studentFees.slice():[];
+  if(!feeRows.length){
+    const alternatives=[sm.fees,sm.feeRecords,sm.studentFeeRecords].find(Array.isArray);
+    if(Array.isArray(alternatives))feeRows=alternatives.slice();
+  }
+
+  // Keep every imported Student Fees row. Do NOT merge rows by student/category:
+  // the same student may have multiple installments or fee records.
+  const records=[];
+  const usedPaymentKeys=new Set();
+  feeRows.forEach((f,idx)=>{
+    const adm=String(f.studentAdmissionNo||f.admissionNo||f.adm||'').trim();
+    const category=String(f.category||f.type||f.feeType||f.feeCategory||'').trim();
+    if(!adm && !category)return;
+    const amount=num(f.amount??f.total??f.expected);
+    const explicitPaid=num(f.paid??f.paidAmount);
+    const explicitPending=num(f.pending??f.pendingAmount);
+    const dueDate=String(f.dueDate||f.due||f.due_date||'').trim();
+    const catNorm=normalizeCat(category);
+    const matchingPayments=paymentRows.filter(p=>{
+      const pAdm=String(p.studentAdmissionNo||p.admissionNo||p.adm||'').trim();
+      const pCat=normalizeCat(p.category||p.type||p.feeType||p.feeCategory||'Fee');
+      return pAdm===adm && pCat===catNorm;
+    });
+    const paymentTotal=matchingPayments.reduce((sum,p)=>sum+num(p.amount??p.paid),0);
+    matchingPayments.forEach(p=>usedPaymentKeys.add(JSON.stringify([p.studentAdmissionNo||p.admissionNo||p.adm||'',p.category||p.type||p.feeType||'',p.date||'',p.amount||p.paid||'',p.receiptNo||p.ref||''])));
+    const paid=explicitPaid>0?explicitPaid:paymentTotal;
+    let pending=explicitPending>0?explicitPending:Math.max(amount-paid,0);
+    const rawStatus=normStatus(f.status);
+    let status=pending>0?'Pending':(rawStatus==='pending'?'Pending':'Paid');
+    if(rawStatus==='paid' && explicitPaid===0 && matchingPayments.length===0 && amount>0){
+      pending=0;status='Paid';
+    }
+    const student=findStudentByAdmission(adm);
+    records.push({
+      id:'fee-'+idx+'-'+adm+'-'+dueDate,
+      adm,name:student?.name||f.student||f.name||adm,category,amount,paid,pending,dueDate,status
+    });
+  });
+
+  // Also show payment-only records so imported payment details are never hidden.
+  paymentRows.forEach((p,idx)=>{
+    const adm=String(p.studentAdmissionNo||p.admissionNo||p.adm||'').trim();
+    const category=String(p.category||p.type||p.feeType||p.feeCategory||'Fee').trim();
+    if(!adm)return;
+    const exists=records.some(r=>r.adm===adm && normalizeCat(r.category)===normalizeCat(category));
+    if(exists)return;
+    const amount=num(p.amount??p.paid);
+    const student=findStudentByAdmission(adm);
+    records.push({id:'payment-'+idx+'-'+adm,name:student?.name||p.student||adm,adm,category,amount,paid:amount,pending:0,dueDate:'',status:'Paid'});
+  });
+
+  const filtered=records.filter(r=>{
+    const typeOK=selectedType==='all fee types'||!selectedType||normalizeCat(r.category)===normalizeCat(selectedType);
+    const statusOK=selectedStatus==='all status'||!selectedStatus||normStatus(r.status)===selectedStatus;
+    const searchOK=!search||[r.name,r.adm,r.category,r.dueDate,r.status].join(' ').toLowerCase().includes(search);
+    return typeOK&&statusOK&&searchOK;
+  });
+
+  tb.innerHTML=filtered.map(r=>`<tr>
+    <td><strong>${esc(r.name)}</strong><small style="display:block;color:#64748b">${esc(r.adm)}</small></td>
+    <td>${esc(r.category||'—')}</td>
+    <td>₹${r.amount.toLocaleString('en-IN')}</td>
+    <td>₹${r.paid.toLocaleString('en-IN')}</td>
+    <td><strong>₹${r.pending.toLocaleString('en-IN')}</strong></td>
+    <td>${esc(r.dueDate||'—')}</td>
+    <td><span class="status ${r.status==='Paid'?'status-paid':'status-pending'}">${r.status}</span></td>
+    <td><button class="action" onclick="${r.status==='Paid'?`printReceipt(${JSON.stringify(r.name)},${JSON.stringify('₹'+r.paid.toLocaleString('en-IN'))})`:`openModal('paymentModal')`}">${r.status==='Paid'?'Print':'Pay'}</button></td>
+  </tr>`).join('')||'<tr><td colspan="8"><div class="empty">No fee records found</div></td></tr>';
+
+  // Summary cards always use the complete unfiltered data set.
+  const expected=records.reduce((a,x)=>a+x.amount,0);
+  const collected=records.reduce((a,x)=>a+x.paid,0);
+  const pendingTotal=records.reduce((a,x)=>a+x.pending,0);
+  const cards=document.querySelectorAll('#view-fees .stat-value');
+  if(cards[0])cards[0].textContent='₹'+expected.toLocaleString('en-IN');
+  if(cards[1])cards[1].textContent='₹'+collected.toLocaleString('en-IN');
+  if(cards[2])cards[2].textContent='₹'+pendingTotal.toLocaleString('en-IN');
+  const statCards=document.querySelectorAll('#view-fees .stat');
+  if(statCards[2]){
+    const note=statCards[2].querySelector('.stat-note');
+    if(note)note.textContent=records.filter(r=>r.pending>0).length+' accounts';
+  }
+}
+
+function filterImportedFees(){renderImportedFeeData();}
+
+function renderImportedLibrary(){
+  const tb=document.querySelector('#libraryTable tbody');if(!tb)return;
+  const books=Array.isArray(sm.books)?sm.books:[];
+  const tx=Array.isArray(sm.libraryTransactions)?sm.libraryTransactions:[];
+  const select=document.getElementById('libraryCategoryFilter');
+  const search=document.getElementById('librarySearch');
+  const current=select?String(select.value||'all'):'all';
+  const categories=[...new Set(books.map(b=>String(b.category||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  if(select){
+    const normalizedCurrent=current.toLowerCase();
+    select.innerHTML='<option value="all">All categories</option>'+categories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    const match=categories.find(c=>c.toLowerCase()===normalizedCurrent);
+    select.value=match||'all';
+  }
+  filterLibrary();
+  const cards=document.querySelectorAll('#view-library .stat-value');
+  if(cards[0])cards[0].textContent=books.reduce((a,b)=>a+Number(b.copies??b.quantity??0),0);
+  if(cards[1])cards[1].textContent=tx.filter(x=>String(x.status||'').toLowerCase()==='issued').length;
+  if(cards[2])cards[2].textContent=tx.filter(x=>Number(x.fine||0)>0).length;
+}
+function filterLibrary(){
+  const tb=document.querySelector('#libraryTable tbody');if(!tb)return;
+  const books=Array.isArray(sm.books)?sm.books:[];
+  const tx=Array.isArray(sm.libraryTransactions)?sm.libraryTransactions:[];
+  const select=document.getElementById('libraryCategoryFilter');
+  const search=document.getElementById('librarySearch');
+  const selected=String(select?.value||'all').trim().toLowerCase();
+  const query=String(search?.value||'').trim().toLowerCase();
+  const rows=books.filter(b=>{
+    const category=String(b.category||'').trim();
+    const categoryOK=selected==='all'||category.toLowerCase()===selected;
+    const t=tx.find(x=>String(x.book||'')===String(b.title||'')&&String(x.status||'').toLowerCase()==='issued');
+    const st=t?findStudentByAdmission(t.studentAdmissionNo):null;
+    const text=[b.title,b.author,category,b.copies??b.quantity??0,st?.name||'',t?.returnDate||''].join(' ').toLowerCase();
+    return categoryOK&&(!query||text.includes(query));
+  });
+  tb.innerHTML=rows.map(b=>{
+    const t=tx.find(x=>String(x.book||'')===String(b.title||'')&&String(x.status||'').toLowerCase()==='issued');
+    const st=t?findStudentByAdmission(t.studentAdmissionNo):null;
+    return `<tr><td><strong>${esc(b.title)}</strong></td><td>${esc(b.author)}</td><td>${esc(b.category||'—')}</td><td>${esc(b.copies??b.quantity??0)}</td><td>${esc(st?.name||'—')}</td><td>${esc(t?.returnDate||'—')}</td></tr>`;
+  }).join('')||'<tr><td colspan="6"><div class="empty">No books found for the selected category</div></td></tr>';
+}
+
+function renderImportedStaff(){
+  const tb=document.querySelector('#staffTable tbody');if(!tb)return;
+  if(sm.staff.length)tb.innerHTML=sm.staff.map(x=>`<tr><td><div class="student-cell"><div class="avatar-sm">${initials(x.name)}</div><strong>${esc(x.name)}</strong></div></td>
+  <td>${esc(x.id||x.employeeId)}</td><td>${esc(x.designation)}</td><td>${esc(x.subject||'')}</td><td>${esc(x.phone)}</td><td><span class="status status-active">${esc(x.status||'Active')}</span></td></tr>`).join('');
+}
+function renderImportedNotices(){
+  const view=document.getElementById('view-notices');if(!view||!sm.notices.length)return;
+  const box=view.querySelector('.card-body');if(!box)return;
+  box.innerHTML=sm.notices.slice().reverse().map(n=>`<div class="notice"><strong>${esc(n.title)}</strong><span class="status status-active" style="float:right">${esc(n.status||'Published')}</span><p>${esc(n.message)} Audience: ${esc(n.audience)} • ${esc(n.date)}</p></div>`).join('');
+}
+function renderAllImportedTabs(){
+  normalizeImportedAppData();
+  renderStudents();renderImportedStaff();renderImportedFeeData();renderImportedNotices();
+  renderTransport();renderImportedAttendance();renderImportedAcademics();renderImportedExams();
+  renderImportedHomework();renderImportedLibrary();
+  populateTransportFields();populateTransportAssignmentStudents();populateTransportAssignmentVehicles();
+  updateDashboard();
+}
+
+
+/* ---------- Connected Reports: use live imported/application data ---------- */
+function getReportStudentRows(){
+  normalizeImportedAppData();
+  return (sm.students||[]).map(s=>({
+    name:s.name||'', admissionNo:s.adm||s.admissionNo||'', registrationNo:s.registrationNo||'',
+    className:s.grade||s.class||'', academicGrade:s.academicGrade||s.resultGrade||'', division:s.div||s.division||'', gender:s.gender||'',
+    dob:s.dob||'', phone:s.phone||'', address:s.address||'', status:s.status||'',
+    transport:s.transport||'No', vehicle:s.vehicle||'', route:s.route||''
+  }));
+}
+function getReportAttendanceRows(){
+  return (sm.attendance||[]).map(a=>{
+    const s=findStudentByAdmission(a.studentAdmissionNo);
+    return {date:a.date||'',status:a.status||'',admissionNo:a.studentAdmissionNo||'',name:s?.name||'',className:s?.grade||'',division:s?.div||''};
+  });
+}
+function getReportPaymentRows(){
+  return (sm.feePayments||sm.payments||[]).map(p=>{
+    const adm=p.studentAdmissionNo||'';
+    const s=findStudentByAdmission(adm);
+    return {date:p.date||'',admissionNo:adm,name:s?.name||p.student||'',category:p.category||p.type||'',
+      amount:Number(p.amount||0),receiptNo:p.receiptNo||p.ref||'',method:p.method||''};
+  });
+}
+function getReportFeeRows(){
+  return (sm.studentFees||[]).map(f=>{
+    const s=findStudentByAdmission(f.studentAdmissionNo);
+    const paid=getReportPaymentRows().filter(p=>p.admissionNo===String(f.studentAdmissionNo||'')&&p.category===String(f.category||''))
+      .reduce((n,p)=>n+p.amount,0);
+    const amount=Number(f.amount||0);
+    return {admissionNo:f.studentAdmissionNo||'',name:s?.name||'',className:s?.grade||'',category:f.category||'',
+      amount,paid,pending:Math.max(amount-paid,0),dueDate:f.dueDate||'',status:f.status||''};
+  });
+}
+function getReportExamRows(){
+  return (sm.examMarks||[]).map(m=>{
+    const s=findStudentByAdmission(m.studentAdmissionNo);
+    return {admissionNo:m.studentAdmissionNo||'',name:s?.name||'',className:s?.grade||'',division:s?.div||'',
+      exam:m.exam||'',subject:m.subject||'',marks:Number(m.marks||0),grade:m.grade||'',percentage:m.percentage||'',rank:m.rank||''};
+  });
+}
+function getReportStaffRows(){
+  return (sm.staff||sm.teachers||[]).map(x=>({employeeId:x.employeeId||x.id||'',name:x.name||'',designation:x.designation||'',
+    subject:x.subject||x.subjects||'',phone:x.phone||'',email:x.email||'',status:x.status||'Active'}));
+}
+function getReportTransportRows(){
+  return getReportStudentRows().filter(s=>String(s.transport).toLowerCase()==='yes'||s.vehicle||s.route);
+}
+function getReportLibraryRows(){
+  return (sm.libraryTransactions||[]).map(t=>{
+    const s=findStudentByAdmission(t.studentAdmissionNo);
+    return {admissionNo:t.studentAdmissionNo||'',name:s?.name||'',book:t.book||'',issueDate:t.issueDate||'',
+      returnDate:t.returnDate||'',fine:Number(t.fine||0),status:t.status||''};
+  });
+}
+function reportEscape(v){return esc(String(v??''));}
+function reportTable(title,headers,rows){
+  const th=headers.map(h=>`<th>${reportEscape(h)}</th>`).join('');
+  const body=rows.length?rows.map(r=>`<tr>${r.map(v=>`<td>${reportEscape(v)}</td>`).join('')}</tr>`).join(''):
+    `<tr><td colspan="${headers.length}"><div class="empty">No records found</div></td></tr>`;
+  return `<div class="card" style="margin-top:16px"><div class="card-head"><h3>${reportEscape(title)}</h3><button class="btn" onclick="printReportSection(this)">Print</button></div>
+  <div class="table-wrap"><table><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table></div></div>`;
+}
+function printReportSection(btn){
+  const card=btn.closest('.card');if(!card)return;
+  const w=window.open('','_blank');if(!w)return;
+  w.document.write(`<html><head><title>School Report</title><style>body{font-family:Arial,sans-serif;padding:24px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px;text-align:left}h3{margin-top:0}button{display:none}</style></head><body>${card.innerHTML}</body></html>`);
+  w.document.close();w.focus();setTimeout(()=>w.print(),250);
+}
+function renderConnectedReports(){
+  const view=document.getElementById('view-reports');if(!view)return;
+  const students=getReportStudentRows(),attendance=getReportAttendanceRows(),fees=getReportFeeRows(),
+    payments=getReportPaymentRows(),exams=getReportExamRows(),staff=getReportStaffRows(),
+    transport=getReportTransportRows(),library=getReportLibraryRows();
+
+  // Replace only the report results area; preserve the existing report controls/design.
+  let area=view.querySelector('#connectedReportResults');
+  if(!area){
+    area=document.createElement('div');area.id='connectedReportResults';area.style.marginTop='16px';
+    view.appendChild(area);
+  }
+  const reportType=(view.querySelector('#reportType')?.value||view.querySelector('select')?.value||'Student Report').toLowerCase();
+  let title='Student Report',headers=[],rows=[];
+  if(reportType.includes('attendance')){
+    title='Attendance Report';headers=['Date','Admission No.','Student','Class','Division','Status'];
+    rows=attendance.map(x=>[x.date,x.admissionNo,x.name,x.className,x.division,x.status]);
+  }else if(reportType.includes('pending')||reportType.includes('fee')){
+    title=reportType.includes('pending')?'Pending Fee Report':'Fee Collection Report';
+    headers=['Admission No.','Student','Class','Category','Amount','Paid','Pending','Due Date'];
+    rows=fees.filter(x=>reportType.includes('pending')?x.pending>0:true).map(x=>[x.admissionNo,x.name,x.className,x.category,
+      '₹'+x.amount.toLocaleString('en-IN'),'₹'+x.paid.toLocaleString('en-IN'),'₹'+x.pending.toLocaleString('en-IN'),x.dueDate]);
+  }else if(reportType.includes('payment')){
+    title='Payment History';headers=['Date','Receipt No.','Admission No.','Student','Category','Amount','Method'];
+    rows=payments.map(x=>[x.date,x.receiptNo,x.admissionNo,x.name,x.category,'₹'+x.amount.toLocaleString('en-IN'),x.method]);
+  }else if(reportType.includes('exam')||reportType.includes('result')){
+    title='Exam / Result Report';headers=['Admission No.','Student','Class','Exam','Subject','Marks','Grade','%','Rank'];
+    rows=exams.map(x=>[x.admissionNo,x.name,x.className,x.exam,x.subject,x.marks,x.grade,x.percentage,x.rank]);
+  }else if(reportType.includes('staff')){
+    title='Staff Report';headers=['Employee ID','Name','Designation','Subject','Phone','Email','Status'];
+    rows=staff.map(x=>[x.employeeId,x.name,x.designation,x.subject,x.phone,x.email,x.status]);
+  }else if(reportType.includes('transport')){
+    title='Transport Report';headers=['Admission No.','Student','Class','Division','Vehicle','Route','Phone'];
+    rows=transport.map(x=>[x.admissionNo,x.name,x.className,x.division,x.vehicle,x.route,x.phone]);
+  }else if(reportType.includes('library')){
+    title='Library Report';headers=['Admission No.','Student','Book','Issue Date','Return Date','Fine','Status'];
+    rows=library.map(x=>[x.admissionNo,x.name,x.book,x.issueDate,x.returnDate,'₹'+x.fine.toLocaleString('en-IN'),x.status]);
+  }else{
+    title='Student Report';headers=['Admission No.','Registration No.','Student','Class','Division','Gender','Phone','Transport','Vehicle','Route','Status'];
+    rows=students.map(x=>[x.admissionNo,x.registrationNo,x.name,x.className,x.academicGrade||'',x.division,x.gender,x.phone,x.transport,x.vehicle,x.route,x.status]);
+  }
+  area.innerHTML=reportTable(title,headers,rows);
+}
+function hookReportsToLiveData(){
+  const view=document.getElementById('view-reports');if(!view)return;
+  view.querySelectorAll('select,input').forEach(el=>{
+    if(el.dataset.reportHooked)return;
+    el.dataset.reportHooked='1';
+    el.addEventListener('change',renderConnectedReports);
+    el.addEventListener('input',renderConnectedReports);
+  });
+  renderConnectedReports();
+}
+
+</script>
+
+<div id="transportAssignmentModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Assign Student to Transport</h3>
+      <button class="close" onclick="closeModal('transportAssignmentModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field full">
+          <label>Student Name & Admission Number *</label>
+          <select id="transportStudentSelect" onchange="syncTransportStudentDetails()">
+            <option value="">Select student</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Admission Number</label>
+          <input id="transportAdmissionDisplay" readonly placeholder="Auto-filled">
+        </div>
+        <div class="field">
+          <label>Registration Number</label>
+          <input id="transportRegistrationDisplay" readonly placeholder="Auto-filled">
+        </div>
+        <div class="field">
+          <label>Class & Division</label>
+          <input id="transportClassDisplay" readonly placeholder="Auto-filled">
+        </div>
+        <div class="field">
+          <label>Vehicle *</label>
+          <select id="transportAssignVehicle" onchange="syncTransportRoute();syncTransportVehicleDetails()">
+            <option value="">Select vehicle</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Vehicle Registration Number</label>
+          <input id="transportVehicleRegistrationDisplay" readonly placeholder="Auto-filled">
+        </div>
+        <div class="field">
+          <label>Route *</label>
+          <select id="transportAssignRoute">
+            <option value="">Select route</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('transportAssignmentModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTransportAssignment()">Save Assignment</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="schoolImportModal" class="modal-backdrop">
+  <div class="modal" style="max-width:1000px">
+    <div class="modal-head"><h3>Import School Data</h3><button class="close" onclick="closeModal('schoolImportModal')">×</button></div>
+    <div class="modal-body"><div id="schoolImportPreview"></div></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal('schoolImportModal')">Cancel</button>
+      <button class="btn btn-primary" id="confirmSchoolImportBtn" onclick="confirmSchoolImport()" disabled>Confirm Import</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(function(){
+    try{hookReportsToLiveData();}catch(e){console.warn('Reports init',e);}
+  },100);
+});
+document.addEventListener('click',function(e){
+  const b=e.target.closest('[data-view="reports"],[onclick*="reports"],button');
+  if(b){
+    setTimeout(function(){
+      try{if(document.getElementById('view-reports')?.classList.contains('active')||
+        document.getElementById('view-reports')?.style.display!=='none')hookReportsToLiveData();}catch(e){}
+    },80);
+  }
+});
+
+/* ---------- Individual report printing ---------- */
+function reportSchoolHeader(){
+  const p=typeof getSchoolProfile==='function'?getSchoolProfile():{};
+  return `<div class="report-header"><h1>${reportEscape(p.name||'School Management System')}</h1>
+    <div>${reportEscape(p.address||'')}</div>
+    <div>${reportEscape(p.phone||'')} ${p.email?' • '+reportEscape(p.email):''}</div>
+    <hr></div>`;
+}
+function reportPrintHtml(title,headers,rows,summary=''){
+  const now=new Date().toLocaleString('en-IN');
+  const th=headers.map(h=>`<th>${reportEscape(h)}</th>`).join('');
+  const body=rows.length?rows.map(r=>`<tr>${r.map(v=>`<td>${reportEscape(v)}</td>`).join('')}</tr>`).join(''):
+    `<tr><td colspan="${headers.length}" class="empty">No records found for this report.</td></tr>`;
+  const p=typeof getSchoolProfile==='function'?getSchoolProfile():{};
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${reportEscape(title)}</title>
+  <style>
+  @page{size:A4 landscape;margin:12mm}
+  *{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#172033;margin:0;font-size:11px}
+  .report-header{text-align:center;margin-bottom:12px}.report-header h1{font-size:22px;margin:0 0 4px}
+  .report-header div{font-size:10px;color:#526174;margin:2px 0}.report-header hr{border:0;border-top:1px solid #dbe2ea;margin:10px 0}
+  h2{text-align:center;font-size:16px;margin:5px 0}.meta{text-align:center;color:#64748b;font-size:10px;margin-bottom:12px}
+  .summary{margin:0 0 12px;padding:8px;border:1px solid #dbe2ea;background:#f8fafc;font-size:10px}
+  table{width:100%;border-collapse:collapse;table-layout:auto}th,td{border:1px solid #d6dde7;padding:6px 7px;text-align:left;vertical-align:top}
+  th{font-weight:700;background:#f1f5f9}tr{page-break-inside:avoid}.empty{text-align:center;padding:20px;color:#64748b}
+  .footer{margin-top:14px;font-size:9px;color:#64748b;text-align:right}
+  @media print{button{display:none}}
+  </style></head><body>${reportSchoolHeader()}<h2>${reportEscape(title)}</h2>
+  <div class="meta">Generated ${reportEscape(now)}</div>${summary?`<div class="summary">${summary}</div>`:''}
+  <table><thead><tr>${th}</tr></thead><tbody>${body}</tbody></table>
+  <div class="footer">${reportEscape(p.name||'School Management System')} • School Management Report</div>
+  </body></html>`;
+}
+function printSpecificReport(type){
+  normalizeImportedAppData();
+  let title='',headers=[],rows=[],summary='';
+  if(type==='student'){
+    const d=getReportStudentRows();
+    title='Student Report';
+    headers=['Admission No.','Registration No.','Student Name','Class','Academic Grade','Division','Gender','DOB','Parent/Guardian','Phone','Transport','Vehicle','Route','Status'];
+    rows=d.map(x=>[x.admissionNo,x.registrationNo,x.name,x.className,x.division,x.gender,x.dob,
+      (sm.students.find(s=>String(s.adm||'')===String(x.admissionNo))||{}).parent||'',x.phone,x.transport,x.vehicle,x.route,x.status]);
+    summary=`Total Students: <b>${d.length}</b>`;
+  }else if(type==='attendance'){
+    const d=getReportAttendanceRows();
+    title='Attendance Report';
+    headers=['Date','Admission No.','Student Name','Class','Division','Status'];
+    rows=d.map(x=>[x.date,x.admissionNo,x.name,x.className,x.division,x.status]);
+    const present=d.filter(x=>x.status==='Present').length, absent=d.filter(x=>x.status==='Absent').length, leave=d.filter(x=>x.status==='Leave').length;
+    summary=`Records: <b>${d.length}</b> &nbsp; Present: <b>${present}</b> &nbsp; Absent: <b>${absent}</b> &nbsp; Leave: <b>${leave}</b>`;
+  }else if(type==='fees'){
+    const fees=getReportFeeRows(), payments=getReportPaymentRows();
+    title='Fee Collection Report';
+    headers=['Admission No.','Student','Class','Fee Category','Amount','Paid','Pending','Due Date'];
+    rows=fees.map(x=>[x.admissionNo,x.name,x.className,x.category,'₹'+x.amount.toLocaleString('en-IN'),
+      '₹'+x.paid.toLocaleString('en-IN'),'₹'+x.pending.toLocaleString('en-IN'),x.dueDate]);
+    const collected=payments.reduce((n,p)=>n+p.amount,0),pending=fees.reduce((n,f)=>n+f.pending,0);
+    summary=`Fee records: <b>${fees.length}</b> &nbsp; Payments recorded: <b>${payments.length}</b> &nbsp; Collected: <b>₹${collected.toLocaleString('en-IN')}</b> &nbsp; Pending: <b>₹${pending.toLocaleString('en-IN')}</b>`;
+  }else if(type==='exams'){
+    const d=getReportExamRows();
+    title='Exam Results Report';
+    headers=['Admission No.','Student','Class','Division','Exam','Subject','Marks','Grade','Percentage','Rank'];
+    rows=d.map(x=>[x.admissionNo,x.name,x.className,x.division,x.exam,x.subject,x.marks,x.grade,x.percentage,x.rank]);
+    summary=`Result records: <b>${d.length}</b>`;
+  }else if(type==='staff'){
+    const d=getReportStaffRows();
+    title='Staff Report';
+    headers=['Employee ID','Name','Designation','Subject','Phone','Email','Status'];
+    rows=d.map(x=>[x.employeeId,x.name,x.designation,x.subject,x.phone,x.email,x.status]);
+    summary=`Total Staff: <b>${d.length}</b>`;
+  }else if(type==='transport'){
+    const d=getReportTransportRows();
+    title='Transport Report';
+    headers=['Admission No.','Student','Class','Division','Phone','Vehicle','Registration No.','Route'];
+    rows=d.map(x=>{
+      const v=(sm.vehicles||[]).find(v=>String(v.name||v.vehicle||'').trim()===String(x.vehicle||'').trim());
+      return [x.admissionNo,x.name,x.className,x.division,x.phone,x.vehicle,v?.registrationNo||v?.reg||'',x.route];
+    });
+    const vehicles=(sm.vehicles||[]).length,routes=(sm.routes||[]).length;
+    summary=`Assigned Students: <b>${d.length}</b> &nbsp; Vehicles: <b>${vehicles}</b> &nbsp; Routes: <b>${routes}</b>`;
+  }else{
+    return printSpecificReport('student');
+  }
+
+  const w=window.open('','_blank','width=1100,height=800');
+  if(!w){showToast('Please allow pop-ups to print reports');return;}
+  w.document.open();
+  w.document.write(reportPrintHtml(title,headers,rows,summary));
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(),350);
+}
+
+
+/* Final report-button click fallback */
+(function(){
+  const reportMap = {
+    'Student Report':'student',
+    'Attendance Report':'attendance',
+    'Fee Collection':'fees',
+    'Exam Results':'exams',
+    'Staff Report':'staff',
+    'Transport Report':'transport'
+  };
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    if((btn.textContent||'').trim() !== 'Generate & Print') return;
+    const card = btn.closest('.card');
+    const heading = card && card.querySelector('h3');
+    const type = heading && reportMap[(heading.textContent||'').trim()];
+    if(!type) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if(typeof printSpecificReport === 'function') printSpecificReport(type);
+  }, true);
+})();
+
+
+/* ---------- Reports: show generated report BELOW the selected report card ---------- */
+function buildInlineReport(title, headers, rows, summary, reportType){
+  const p = typeof getSchoolProfile === 'function' ? getSchoolProfile() : {};
+  const now = new Date().toLocaleString('en-IN');
+  const th = headers.map(h => `<th>${reportEscape(h)}</th>`).join('');
+  const body = rows.length
+    ? rows.map(r => `<tr>${r.map(v => `<td>${reportEscape(v)}</td>`).join('')}</tr>`).join('')
+    : `<tr><td colspan="${headers.length}"><div class="empty">No records found for this report.</div></td></tr>`;
+
+  return `<div class="card connected-inline-report" id="generatedReport_${reportType}" style="margin-top:20px;">
+    <div class="card-head" style="align-items:center;">
+      <div>
+        <h3 style="margin-bottom:4px;">${reportEscape(title)}</h3>
+        <div style="font-size:12px;color:#64748b;">${reportEscape(p.name || 'School Management System')} • Generated ${reportEscape(now)}</div>
+      </div>
+      <button class="btn" type="button" onclick="printInlineReport('generatedReport_${reportType}')">Print Report</button>
+    </div>
+    ${summary ? `<div style="padding:12px 16px;border-bottom:1px solid #e5e7eb;color:#475569;font-size:13px;">${summary}</div>` : ''}
+    <div class="table-wrap">
+      <table>
+        <thead><tr>${th}</tr></thead>
+        <tbody>${body}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function printInlineReport(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const p = typeof getSchoolProfile === 'function' ? getSchoolProfile() : {};
+  const w = window.open('', '_blank', 'width=1100,height=800');
+  if(!w){ showToast('Please allow pop-ups to print the report'); return; }
+  const clone = el.cloneNode(true);
+  clone.querySelectorAll('button').forEach(b => b.remove());
+  w.document.open();
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8">
+    <title>School Report</title>
+    <style>
+      @page{size:A4 landscape;margin:12mm}
+      *{box-sizing:border-box}
+      body{font-family:Arial,Helvetica,sans-serif;color:#172033;margin:0;font-size:11px}
+      .card-head{display:flex;justify-content:space-between;align-items:center}
+      h3{font-size:18px;margin:0 0 4px}
+      .table-wrap{overflow:visible}
+      table{width:100%;border-collapse:collapse}
+      th,td{border:1px solid #d6dde7;padding:6px 7px;text-align:left;vertical-align:top}
+      th{background:#f1f5f9;font-weight:700}
+      tr{page-break-inside:avoid}
+      .empty{text-align:center;padding:20px;color:#64748b}
+    </style></head><body>
+    <div style="text-align:center;margin-bottom:12px;">
+      <h1 style="font-size:22px;margin:0 0 4px;">${reportEscape(p.name || 'School Management System')}</h1>
+      <div style="font-size:10px;color:#64748b;">${reportEscape(p.address || '')}</div>
+      <div style="font-size:10px;color:#64748b;">${reportEscape(p.phone || '')} ${p.email ? ' • '+reportEscape(p.email) : ''}</div>
+    </div>
+    ${clone.outerHTML}
+    </body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(() => w.print(), 300);
+}
+
+function showReportBelow(type){
+  normalizeImportedAppData();
+
+  let title='', headers=[], rows=[], summary='';
+
+  if(type === 'student'){
+    const d=getReportStudentRows();
+    title='Student Report';
+    headers=['Admission No.','Registration No.','Student Name','Class','Division','Gender','DOB','Parent/Guardian','Phone','Transport','Vehicle','Route','Status'];
+    rows=d.map(x=>{
+      const s=(sm.students||[]).find(st=>String(st.adm||st.admissionNo||'')===String(x.admissionNo||''));
+      return [x.admissionNo,x.registrationNo,x.name,x.className,s?.academicGrade||'',x.division,x.gender,x.dob,s?.parent||s?.guardian||'',x.phone,x.transport,x.vehicle,x.route,x.status];
+    });
+    summary=`Total Students: <b>${d.length}</b>`;
+  }else if(type === 'attendance'){
+    const d=getReportAttendanceRows();
+    title='Attendance Report';
+    headers=['Date','Admission No.','Student Name','Class','Division','Status'];
+    rows=d.map(x=>[x.date,x.admissionNo,x.name,x.className,x.division,x.status]);
+    const present=d.filter(x=>x.status==='Present').length;
+    const absent=d.filter(x=>x.status==='Absent').length;
+    const leave=d.filter(x=>x.status==='Leave').length;
+    summary=`Records: <b>${d.length}</b> &nbsp; Present: <b>${present}</b> &nbsp; Absent: <b>${absent}</b> &nbsp; Leave: <b>${leave}</b>`;
+  }else if(type === 'fees'){
+    const fees=getReportFeeRows(), payments=getReportPaymentRows();
+    title='Fee Collection Report';
+    headers=['Admission No.','Student','Class','Fee Category','Amount','Paid','Pending','Due Date'];
+    rows=fees.map(x=>[x.admissionNo,x.name,x.className,x.category,
+      '₹'+x.amount.toLocaleString('en-IN'),'₹'+x.paid.toLocaleString('en-IN'),
+      '₹'+x.pending.toLocaleString('en-IN'),x.dueDate]);
+    const collected=payments.reduce((n,p)=>n+p.amount,0);
+    const pending=fees.reduce((n,f)=>n+f.pending,0);
+    summary=`Fee Records: <b>${fees.length}</b> &nbsp; Payments: <b>${payments.length}</b> &nbsp; Collected: <b>₹${collected.toLocaleString('en-IN')}</b> &nbsp; Pending: <b>₹${pending.toLocaleString('en-IN')}</b>`;
+  }else if(type === 'exams'){
+    const d=getReportExamRows();
+    title='Exam Results Report';
+    headers=['Admission No.','Student','Class','Division','Exam','Subject','Marks','Grade','Percentage','Rank'];
+    rows=d.map(x=>[x.admissionNo,x.name,x.className,x.division,x.exam,x.subject,x.marks,x.grade,x.percentage,x.rank]);
+    summary=`Result Records: <b>${d.length}</b>`;
+  }else if(type === 'staff'){
+    const d=getReportStaffRows();
+    title='Staff Report';
+    headers=['Employee ID','Name','Designation','Subject','Phone','Email','Status'];
+    rows=d.map(x=>[x.employeeId,x.name,x.designation,x.subject,x.phone,x.email,x.status]);
+    summary=`Total Staff: <b>${d.length}</b>`;
+  }else if(type === 'transport'){
+    const d=getReportTransportRows();
+    title='Transport Report';
+    headers=['Admission No.','Student','Class','Division','Phone','Vehicle','Registration No.','Route'];
+    rows=d.map(x=>{
+      const v=(sm.vehicles||[]).find(v =>
+        String(v.name||v.vehicle||'').trim() === String(x.vehicle||'').trim()
+      );
+      return [x.admissionNo,x.name,x.className,x.division,x.phone,x.vehicle,
+        v?.registrationNo||v?.reg||v?.registrationNumber||'',x.route];
+    });
+    summary=`Assigned Students: <b>${d.length}</b> &nbsp; Vehicles: <b>${(sm.vehicles||[]).length}</b> &nbsp; Routes: <b>${(sm.routes||[]).length}</b>`;
+  }else{
+    return;
+  }
+
+  const view=document.getElementById('view-reports');
+  if(!view) return;
+
+  let area=document.getElementById('inlineGeneratedReports');
+  if(!area){
+    area=document.createElement('div');
+    area.id='inlineGeneratedReports';
+    const cards=[...view.querySelectorAll('.card')];
+    const lastCard=cards.length ? cards[cards.length-1] : null;
+    if(lastCard && lastCard.parentElement) lastCard.parentElement.appendChild(area);
+    else view.appendChild(area);
+  }
+
+  area.innerHTML=buildInlineReport(title,headers,rows,summary,type);
+  area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function printSpecificReport(type){
+  showReportBelow(type);
+}
+
+/* Capture Generate & Print buttons and keep the report inside the same page. */
+document.addEventListener('click', function(e){
+  const btn=e.target.closest('button');
+  if(!btn) return;
+  if((btn.textContent||'').trim()!=='Generate & Print') return;
+
+  const card=btn.closest('.card');
+  const heading=card && card.querySelector('h3');
+  const map={
+    'Student Report':'student',
+    'Attendance Report':'attendance',
+    'Fee Collection':'fees',
+    'Exam Results':'exams',
+    'Staff Report':'staff',
+    'Transport Report':'transport'
+  };
+  const type=heading && map[(heading.textContent||'').trim()];
+  if(!type) return;
+
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  showReportBelow(type);
+}, true);
+
+
+/* Student report must never appear automatically/permanently.
+   It is generated only when the Student Report button is clicked. */
+(function(){
+  function removePermanentStudentReport(){
+    const selectors=[
+      '#generatedReport_student',
+      '#studentReportResult',
+      '#permanentStudentReport'
+    ];
+    selectors.forEach(sel=>{
+      document.querySelectorAll(sel).forEach(el=>el.remove());
+    });
+
+    // Remove an old inline-generated Student Report if it was saved into
+    // the page by an earlier version, but leave the report card/button intact.
+    document.querySelectorAll('#inlineGeneratedReports .connected-inline-report').forEach(el=>{
+      const h=el.querySelector('h3');
+      if(h && (h.textContent||'').trim()==='Student Report') el.remove();
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded',removePermanentStudentReport);
+  setTimeout(removePermanentStudentReport,100);
+})();
+
+
+/* ---------- Final fix: no report is rendered automatically ---------- */
+(function(){
+  function clearAutoGeneratedReports(){
+    document.querySelectorAll(
+      '#connectedReportResults,#inlineGeneratedReports,#generatedReport_student,#studentReportResult,#permanentStudentReport'
+    ).forEach(el=>el.remove());
+  }
+
+  // Override the earlier automatic report hook. It may attach filters, but it
+  // must NOT generate a Student Report when the Reports tab is opened.
+  window.hookReportsToLiveData=function(){
+    const view=document.getElementById('view-reports');
+    if(!view) return;
+    view.querySelectorAll('select,input').forEach(el=>{
+      if(el.dataset.reportHookedFinal)return;
+      el.dataset.reportHookedFinal='1';
+      // Do not generate any report from a filter change. Reports are
+      // generated only by the corresponding Generate & Print button.
+    });
+    clearAutoGeneratedReports();
+  };
+
+  // Make sure old generated output cannot remain from an earlier version.
+  document.addEventListener('DOMContentLoaded',function(){
+    clearAutoGeneratedReports();
+    setTimeout(clearAutoGeneratedReports,150);
+    setTimeout(clearAutoGeneratedReports,500);
+  });
+
+  // Do not allow the old report renderer to create a permanent result.
+  const oldRender=window.renderConnectedReports;
+  window.renderConnectedReports=function(){ clearAutoGeneratedReports(); };
+})();
+
+
+/* Final viewport guard for dynamically generated content */
+(function(){
+  function fixResponsiveReports(){
+    document.querySelectorAll('#inlineGeneratedReports table, #connectedReportResults table').forEach(function(t){
+      const wrap=t.parentElement;
+      if(wrap){
+        wrap.style.maxWidth='100%';
+        wrap.style.overflowX='auto';
+        wrap.style.webkitOverflowScrolling='touch';
+      }
+    });
+    document.documentElement.style.overflowX='hidden';
+    document.body.style.overflowX='hidden';
+  }
+  document.addEventListener('DOMContentLoaded',fixResponsiveReports);
+  setTimeout(fixResponsiveReports,300);
+  setTimeout(fixResponsiveReports,1000);
+})();
+
+
+/* ===== Final runtime fix: move generated reports outside the 3-column cards grid ===== */
+(function(){
+  const previousShowReportBelow = window.showReportBelow;
+
+  if(typeof previousShowReportBelow === 'function'){
+    window.showReportBelow = function(type){
+      previousShowReportBelow(type);
+
+      const view=document.getElementById('view-reports');
+      const area=document.getElementById('inlineGeneratedReports');
+      if(view && area){
+        // Put the generated report directly inside the Reports view so it
+        // cannot inherit a single column from the report-card grid.
+        view.appendChild(area);
+        area.style.width='100%';
+        area.style.maxWidth='100%';
+        area.style.minWidth='0';
+        area.style.gridColumn='1 / -1';
+        area.style.justifySelf='stretch';
+
+        const report=area.querySelector('.connected-inline-report');
+        if(report){
+          report.style.width='100%';
+          report.style.maxWidth='100%';
+          report.style.minWidth='0';
+        }
+      }
+    };
+  }
+
+  function normalizeExistingGeneratedReport(){
+    const view=document.getElementById('view-reports');
+    const area=document.getElementById('inlineGeneratedReports');
+    if(!view || !area) return;
+    if(area.parentElement !== view) view.appendChild(area);
+    area.style.width='100%';
+    area.style.maxWidth='100%';
+    area.style.minWidth='0';
+    area.style.gridColumn='1 / -1';
+    area.style.justifySelf='stretch';
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(normalizeExistingGeneratedReport,50);
+    setTimeout(normalizeExistingGeneratedReport,300);
+  });
+})();
+
+
+/* Grade compatibility: preserve imported Academic Grade and calculate missing exam grades. */
+(function(){
+  function normalizeAcademicGrades(){
+    if(typeof sm==='undefined') return;
+    (sm.students||[]).forEach(function(s){
+      if(s.academicGrade==null) s.academicGrade=s['Academic Grade']||s.resultGrade||s.result_grade||'';
+    });
+    (sm.examMarks||[]).forEach(function(m){
+      if((m.grade==null||String(m.grade).trim()==='') && m.marks!=null && String(m.marks).trim()!==''){
+        const n=Number(m.marks);
+        m.grade=n>=90?'A+':n>=80?'A':n>=70?'B+':n>=60?'B':n>=50?'C':n>=40?'D':'F';
+      }
+    });
+  }
+  window.normalizeAcademicGrades=normalizeAcademicGrades;
+  document.addEventListener('DOMContentLoaded',normalizeAcademicGrades);
+})();
+
+(function(){
+  const oldNormalizeImportedAppData = window.normalizeImportedAppData;
+  if(typeof oldNormalizeImportedAppData==='function'){
+    window.normalizeImportedAppData=function(){
+      oldNormalizeImportedAppData();
+      if(Array.isArray(sm.students)){
+        sm.students.forEach(s=>{
+          s.grade=normalizeSchoolClass(s.grade||s.className||s.class||'');
+        });
+      }
+    };
+  }
+  document.addEventListener('DOMContentLoaded',()=>{
+    const f=document.getElementById('studentClassFilter');
+    if(f){
+      f.value='';
+    }
+    renderStudents();
+  });
+})();
+
+
+(function(){
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(function(){
+      if(typeof renderStaff==='function') renderStaff();
+    },50);
+  });
+})();
+
+
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(function(){ if(typeof updateAttendanceSummary==='function') updateAttendanceSummary(); },100);
+});
+
+
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(function(){ if(typeof renderImportedAttendance==='function') renderImportedAttendance(); },120);
+});
+
+</script>
+
+<script>
+/* Restore role visibility when reopening an already authenticated page. */
+try {
+  if (localStorage.getItem('schoolLoggedIn') === '1') setRoleUI();
+} catch(e) {}
+</script>
